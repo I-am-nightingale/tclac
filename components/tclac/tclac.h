@@ -9,9 +9,8 @@
 
 #include "esphome.h"
 #include "esphome/core/defines.h"
-#include "esphome/components/climate/climate.h"
 #include "esphome/components/uart/uart.h"
-#include "esphome/components/display/display.h"
+#include "esphome/components/climate/climate.h"
 
 namespace esphome {
 namespace tclac {
@@ -49,18 +48,28 @@ namespace tclac {
 #define SWING_BOTH      	0b01100000
 #define SWING_MODE_MASK    	0b01100000
 
-
+#define STEP_TEMPERATURE 1
 #define MIN_SET_TEMPERATURE 16
 #define MAX_SET_TEMPERATURE 31
-#define STEP_TEMPERATURE 1
 
 using climate::ClimateCall;
+using climate::ClimateMode;
 using climate::ClimatePreset;
 using climate::ClimateTraits;
-using climate::ClimateMode;
-using climate::ClimateSwingMode;
 using climate::ClimateFanMode;
+using climate::ClimateSwingMode;
 
+enum class VerticalSwingDirection : uint8_t {
+	UP_DOWN = 0,
+	UPSIDE = 1,
+	DOWNSIDE = 2,
+};
+enum class HorizontalSwingDirection : uint8_t {
+	LEFT_RIGHT = 0,
+	LEFTSIDE = 1,
+	CENTER = 2,
+	RIGHTSIDE = 3,
+};
 enum class AirflowVerticalDirection : uint8_t {
 	LAST = 0,
 	MAX_UP = 1,
@@ -76,17 +85,6 @@ enum class AirflowHorizontalDirection : uint8_t {
 	CENTER = 3,
 	RIGHT = 4,
 	MAX_RIGHT = 5,
-};
-enum class VerticalSwingDirection : uint8_t {
-	UP_DOWN = 0,
-	UPSIDE = 1,
-	DOWNSIDE = 2,
-};
-enum class HorizontalSwingDirection : uint8_t {
-	LEFT_RIGHT = 0,
-	LEFTSIDE = 1,
-	CENTER = 2,
-	RIGHTSIDE = 3,
 };
 
 class tclacClimate : public climate::Climate, public esphome::uart::UARTDevice, public PollingComponent {
@@ -114,11 +112,11 @@ class tclacClimate : public climate::Climate, public esphome::uart::UARTDevice, 
 		void loop() override;
 		void update() override;
 		void readData();
-		void control(const ClimateCall &call) override; // Climate control
+		void dataShow(bool flow, bool shine);
 		void sendData(byte * message, byte size);
 		static String getHex(byte *message, byte size);
 		static byte getChecksum(const byte * message, size_t size);
-		void dataShow(bool flow, bool shine);
+		void control(const ClimateCall &call) override; // Climate control
 		
 		// Заготовки функций запроса состояния, может пригодиться в будущем, если делать обратную связь. Очень не хочется, будет очень костыльно.
 		
