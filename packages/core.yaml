@@ -9,6 +9,7 @@ external_components:
       type: git
       ref: master
     components: [ tclac ]
+    refresh: 30s
 
 # Конфигурация ESPHome
 esphome:
