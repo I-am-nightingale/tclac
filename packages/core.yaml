@@ -4,10 +4,10 @@
 
 # Компонент климата
 external_components:
-  source:
-    url: https://github.com/I-am-nightingale/tclac.git
-    type: git
-    ref: master
+  - source:
+      url: https://github.com/I-am-nightingale/tclac.git
+      type: git
+      ref: master
     components: [ tclac ]
 
 # Конфигурация ESPHome
