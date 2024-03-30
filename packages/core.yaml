@@ -1,0 +1,286 @@
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+# # # # #                                   НЕ РЕДАКТИРОВАТЬ!!                                  # # # # #
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+
+# Компонент климата
+external_components:
+  - source: https://github.com/I-am-nightingale/tclac.git
+    type: git
+    ref: main
+    components: [ tclac ]
+
+# Конфигурация ESPHome
+esphome:
+  name: ${device_name}
+  friendly_name: ${humanly_name}
+  on_boot:
+    priority: -100
+    then:
+      lambda: !lambda |-
+        if (id(beep_mode).state){
+          id(${device_name}climate).set_beeper_state(true);
+        } else {
+          id(${device_name}climate).set_beeper_state(false);
+        }
+        if (id(display_mode).state){
+          id(${device_name}climate).set_display_state(true);
+        } else {
+          id(${device_name}climate).set_display_state(false);
+        }
+        if (id(ledflash_mode).state){
+          id(${device_name}climate).set_module_display_state(true);
+        } else {
+          id(${device_name}climate).set_module_display_state(false);
+        }
+
+        if (id(vswing).active_index() == 1){
+          id(${device_name}climate).set_vertical_swing_direction(esphome::tclac::VerticalSwingDirection::UP_DOWN);
+        } else if (id(vswing).active_index() == 2){
+          id(${device_name}climate).set_vertical_swing_direction(esphome::tclac::VerticalSwingDirection::UPSIDE);
+        } else if (id(vswing).active_index() == 3){
+          id(${device_name}climate).set_vertical_swing_direction(esphome::tclac::VerticalSwingDirection::DOWNSIDE);
+        }
+
+        if (id(hswing).active_index() == 1){
+          id(${device_name}climate).set_horizontal_swing_direction(esphome::tclac::HorizontalSwingDirection::LEFT_RIGHT);
+        } else if (id(hswing).active_index() == 2){
+          id(${device_name}climate).set_horizontal_swing_direction(esphome::tclac::HorizontalSwingDirection::LEFTSIDE);
+        } else if (id(hswing).active_index() == 3){
+          id(${device_name}climate).set_horizontal_swing_direction(esphome::tclac::HorizontalSwingDirection::CENTER);
+        } else if (id(hswing).active_index() == 4){
+          id(${device_name}climate).set_horizontal_swing_direction(esphome::tclac::HorizontalSwingDirection::RIGHTSIDE);
+        }
+        
+        if (id(vfixing).active_index() == 1){
+          id(${device_name}climate).set_vertical_airflow(esphome::tclac::AirflowVerticalDirection::LAST);
+        } else if (id(vfixing).active_index() == 2){
+          id(${device_name}climate).set_vertical_airflow(esphome::tclac::AirflowVerticalDirection::MAX_UP);
+        } else if (id(vfixing).active_index() == 3){
+          id(${device_name}climate).set_vertical_airflow(esphome::tclac::AirflowVerticalDirection::UP);
+        } else if (id(vfixing).active_index() == 4){
+          id(${device_name}climate).set_vertical_airflow(esphome::tclac::AirflowVerticalDirection::CENTER);
+        } else if (id(vfixing).active_index() == 5){
+          id(${device_name}climate).set_vertical_airflow(esphome::tclac::AirflowVerticalDirection::DOWN);
+        } else if (id(vfixing).active_index() == 6){
+          id(${device_name}climate).set_vertical_airflow(esphome::tclac::AirflowVerticalDirection::MAX_DOWN);
+        }
+        
+        if (id(vswing).active_index() == 1){
+          id(${device_name}climate).set_horizontal_airflow(esphome::tclac::AirflowHorizontalDirection::LAST);
+        } else if (id(vswing).active_index() == 2){
+          id(${device_name}climate).set_horizontal_airflow(esphome::tclac::AirflowHorizontalDirection::MAX_LEFT);
+        } else if (id(vswing).active_index() == 3){
+          id(${device_name}climate).set_horizontal_airflow(esphome::tclac::AirflowHorizontalDirection::LEFT);
+        } else if (id(vswing).active_index() == 4){
+          id(${device_name}climate).set_horizontal_airflow(esphome::tclac::AirflowHorizontalDirection::CENTER);
+        } else if (id(vswing).active_index() == 5){
+          id(${device_name}climate).set_horizontal_airflow(esphome::tclac::AirflowHorizontalDirection::RIGHT);
+        } else if (id(vswing).active_index() == 6){
+          id(${device_name}climate).set_horizontal_airflow(esphome::tclac::AirflowHorizontalDirection::MAX_RIGHT);
+        }
+
+uart:
+  baud_rate: 9600
+  rx_pin: ${uart_rx}
+  tx_pin: ${uart_tx}
+
+api:
+  encryption:
+    key: "${api_key}"
+
+ota:
+  password: "${ota_pass}"
+
+wifi:
+  id: "${device_name}_wifi"
+  ssid: ${wifi_ssid}
+  password: ${wifi_password}
+  ap:
+    ssid: "${device_name} Fallback Hotspot"
+    password: "${recovery_pass}"
+# Если требуется ручное указание настроек сети- это здесь:
+  manual_ip:
+    static_ip: 192.168.1.204
+    gateway: 192.168.1.1
+    subnet: 255.255.255.0
+
+captive_portal:
+
+
+# # # # # # # # # # # # # # # # # # # # # # #
+# # # # #     НЕ РЕДАКТИРОВАТЬ!     # # # # #
+# # # # # # # # # # # # # # # # # # # # # # #
+
+# ОБЯЗАТЕЛЬНО отключаем логгирование через UART
+logger:
+  baud_rate: 0
+
+# Раздел настроек устройства:
+# - Переключатели
+switch:
+  # Пищалка для подтверждения команд, по умолчанию выключена
+  - name: Beeper
+    platform: template
+    device_class: switch
+    id: beep_mode
+    entity_category: config
+    restore_mode: RESTORE_DEFAULT_ON
+    optimistic: true
+    on_turn_on:
+      then:
+        lambda: !lambda |-
+          id(${device_name}climate).set_beeper_state(true);
+    on_turn_off:
+      then:
+        lambda: !lambda |-
+          id(${device_name}climate).set_beeper_state(false);
+  
+  # Индикатор уставки температуры на корпусе внутреннего блока, по умолчанию включен
+  - name: Display
+    platform: template
+    device_class: switch
+    id: display_mode
+    entity_category: config
+    restore_mode: RESTORE_DEFAULT_ON
+    optimistic: true
+    on_turn_on:
+      then:
+        lambda: !lambda |-
+          id(${device_name}climate).set_display_state(true);
+    on_turn_off:
+      then:
+        lambda: !lambda |-
+          id(${device_name}climate).set_display_state(false);
+  
+  # Светодиодная индикация обмена данными с кондиционером, по умолчанию выключена
+  - name: Module display
+    platform: template
+    device_class: switch
+    id: ledflash_mode
+    entity_category: config
+    restore_mode: RESTORE_DEFAULT_ON
+    optimistic: true
+    on_turn_on:
+      then:
+        lambda: !lambda |-
+          id(${device_name}climate).set_module_display_state(true);
+    on_turn_off:
+      then:
+        lambda: !lambda |-
+          id(${device_name}climate).set_module_display_state(false);
+
+# - Выпадающие списки
+select:
+  # Настройка вертикального качания
+  - platform: template
+    name: Vertical swing
+    id: vswing
+    entity_category: config
+    options:
+      - "Сверху вниз"
+      - "В верхней половине"
+      - "В нижней половине"
+    optimistic: true
+    restore_value: true
+    set_action:
+      then:
+        lambda: !lambda |-
+          if (id(vswing).active_index() == 1){
+            id(${device_name}climate).set_vertical_swing_direction(esphome::tclac::VerticalSwingDirection::UP_DOWN);
+          } else if (id(vswing).active_index() == 2){
+            id(${device_name}climate).set_vertical_swing_direction(esphome::tclac::VerticalSwingDirection::UPSIDE);
+          } else if (id(vswing).active_index() == 3){
+            id(${device_name}climate).set_vertical_swing_direction(esphome::tclac::VerticalSwingDirection::DOWNSIDE);
+          }
+
+  # Настройка горизонтального качания
+  - platform: template
+    name: Horizontal swing
+    id: hswing
+    entity_category: config
+    options:
+      - "Слева направо"
+      - "В левой части"
+      - "В центре"
+      - "В правой части"
+    optimistic: true
+    restore_value: true
+    set_action:
+      then:
+        lambda: !lambda |-
+          if (x == "Слева направо"){
+            id(${device_name}climate).set_horizontal_swing_direction(esphome::tclac::HorizontalSwingDirection::LEFT_RIGHT);
+          } else if (x == "В левой части"){
+            id(${device_name}climate).set_horizontal_swing_direction(esphome::tclac::HorizontalSwingDirection::LEFTSIDE);
+          } else if (x == "В центре"){
+            id(${device_name}climate).set_horizontal_swing_direction(esphome::tclac::HorizontalSwingDirection::CENTER);
+          } else if (x == "В правой части"){
+            id(${device_name}climate).set_horizontal_swing_direction(esphome::tclac::HorizontalSwingDirection::RIGHTSIDE);
+          }
+
+  # Настройка фиксации вертикальной заслонки
+  - platform: template
+    name: Vertical fixing
+    id: vfixing
+    entity_category: config
+    options:
+      - Last
+      - Max_Up
+      - Up
+      - Center
+      - Down
+      - Max_Down
+    optimistic: true
+    restore_value: true
+    set_action:
+      then:
+        lambda: !lambda |-
+          if (x == "Last"){
+            id(${device_name}climate).set_vertical_airflow(esphome::tclac::AirflowVerticalDirection::LAST);
+          } else if (x == "Max_Up"){
+            id(${device_name}climate).set_vertical_airflow(esphome::tclac::AirflowVerticalDirection::MAX_UP);
+          } else if (x == "Up"){
+            id(${device_name}climate).set_vertical_airflow(esphome::tclac::AirflowVerticalDirection::UP);
+          } else if (x == "Center"){
+            id(${device_name}climate).set_vertical_airflow(esphome::tclac::AirflowVerticalDirection::CENTER);
+          } else if (x == "Down"){
+            id(${device_name}climate).set_vertical_airflow(esphome::tclac::AirflowVerticalDirection::DOWN);
+          } else if (x == "Max_Down"){
+            id(${device_name}climate).set_vertical_airflow(esphome::tclac::AirflowVerticalDirection::MAX_DOWN);
+          }
+
+  # Настройка фиксации горизонатальных заслонок
+  - platform: template
+    name: Horizontal fixing
+    id: hfixing
+    entity_category: config
+    options:
+      - "Последнее положение"
+      - "До упора влево"
+      - "В левой половине"
+      - "По середине"
+      - "В правой половине"
+      - "До упора вправо"
+    optimistic: true
+    restore_value: true
+    set_action:
+      then:
+        lambda: !lambda |-
+          if (x == "Последнее положение"){
+            id(${device_name}climate).set_horizontal_airflow(esphome::tclac::AirflowHorizontalDirection::LAST);
+          } else if (x == "До упора влево"){
+            id(${device_name}climate).set_horizontal_airflow(esphome::tclac::AirflowHorizontalDirection::MAX_LEFT);
+          } else if (x == "В левой половине"){
+            id(${device_name}climate).set_horizontal_airflow(esphome::tclac::AirflowHorizontalDirection::LEFT);
+          } else if (x == "По середине"){
+            id(${device_name}climate).set_horizontal_airflow(esphome::tclac::AirflowHorizontalDirection::CENTER);
+          } else if (x == "В правой половине"){
+            id(${device_name}climate).set_horizontal_airflow(esphome::tclac::AirflowHorizontalDirection::RIGHT);
+          } else if (x == "До упора вправо"){
+            id(${device_name}climate).set_horizontal_airflow(esphome::tclac::AirflowHorizontalDirection::MAX_RIGHT);
+          }
+
+climate:
+  - platform: tclac
+    name: "${device_name} Climate"
+    id: ${device_name}climate

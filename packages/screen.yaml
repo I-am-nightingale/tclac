@@ -1,0 +1,78 @@
+time:
+  - platform: homeassistant
+    id: my_time
+        
+sensor:
+  - platform: wifi_signal
+    id: wifi_strenght
+    internal: true
+    update_interval: 1s
+    filters:
+      - lambda: return min(max(2 * (x + 100.0), 0.0), 100.0);
+
+font:
+  - file: "gfonts://Press Start 2P"
+    id: font1
+    size: 16
+    bpp: 1
+    glyphs: '!"%()+=,-_.:°/?0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ abcdefghijklmnopqrstuvwxyzАБВГДЕЖЗИКЛМНОПРСТУФХЦЧШЩЪЬЭЮЯЫабвгдежзиклмнопрстуфхцчшщъыьэюя'
+    
+  - file: "gfonts://Press Start 2P"
+    id: font2
+    size: 8
+    bpp: 1
+    glyphs: '!"%()+=,-_.:°/?0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ abcdefghijklmnopqrstuvwxyzАБВГДЕЖЗИКЛМНОПРСТУФХЦЧШЩЪЬЭЮЯЫабвгдежзиклмнопрстуфхцчшщъыьэюя'
+
+i2c:
+  sda: GPIO0
+  scl: GPIO2
+  frequency: 400kHz
+
+display:
+  - platform: ssd1306_i2c
+    model: "SSD1306 128x32"
+    address: 0x3C
+    rotation: 180
+    id: oled_disp
+    lambda: |-
+      if (id(${device_name}_wifi).is_connected()){
+        auto time = id(my_time).now();
+        id(oled_disp).strftime(0, 0, id(font2), "%H:%M", time);
+        id(oled_disp).line(0, 11, 127, 11);
+        
+        if (id(${device_name}climate).mode == CLIMATE_MODE_OFF){
+          id(oled_disp).print(0, 14, id(font1), "Выключен");
+        } else if (id(${device_name}climate).mode == CLIMATE_MODE_AUTO){
+          id(oled_disp).print(0, 14, id(font1), "Авторежим");
+        } else if (id(${device_name}climate).mode == CLIMATE_MODE_COOL){
+          id(oled_disp).print(0, 14, id(font1), "Охлаждение");
+        } else if (id(${device_name}climate).mode == CLIMATE_MODE_HEAT){
+          id(oled_disp).print(0, 14, id(font1), "Нагревание");
+        } else if (id(${device_name}climate).mode == CLIMATE_MODE_DRY){
+          id(oled_disp).print(0, 14, id(font1), "Осушение");
+        } else if (id(${device_name}climate).mode == CLIMATE_MODE_FAN_ONLY){
+          id(oled_disp).print(0, 14, id(font1), "Вентилятор");
+        }
+        
+        if (id(beep_mode).state){
+          id(oled_disp).print(60, 0, id(font2), "П");
+        }
+        if (id(display_mode).state){
+          id(oled_disp).print(80, 0, id(font2), "Д");
+        }
+        if (id(wifi_strenght).state > 20){
+          id(oled_disp).filled_rectangle(109, 6, 3, 2);
+        }
+        if (id(wifi_strenght).state > 50){
+          id(oled_disp).filled_rectangle(114, 4, 3, 4);
+        }
+        if (id(wifi_strenght).state > 70){
+          id(oled_disp).filled_rectangle(119, 2, 3, 6);
+        }
+        if (id(wifi_strenght).state > 85){
+          id(oled_disp).filled_rectangle(124, 0, 3, 8);
+        }
+      }
+      else {
+        id(oled_disp).print(0, 0, id(font1), "Ready!");
+      }

@@ -1,0 +1,5 @@
+climate:
+  - platform: tclac
+    id: !extend ${device_name}climate
+    rx_led: ${receive_led}
+    tx_led: ${transmit_led}
