@@ -624,10 +624,10 @@ void tclacClimate::set_vertical_swing_direction(VerticalSwingDirection direction
 }
 
 void tclacClimate::set_supported_modes(const std::set<climate::ClimateMode> &modes) {
-	auto traits = climate::ClimateTraits();
-	this->traits.set_supported_modes(modes);
-	this->traits.add_supported_mode(climate::CLIMATE_MODE_OFF);			// Выключенный режим доступен всегда
-	this->traits.add_supported_mode(climate::CLIMATE_MODE_AUTO);		// Автоматический режим тоже
+	auto traits_ = climate::ClimateTraits();
+	this->traits_.set_supported_modes(modes);
+	this->traits_.add_supported_mode(climate::CLIMATE_MODE_OFF);			// Выключенный режим доступен всегда
+	this->traits_.add_supported_mode(climate::CLIMATE_MODE_AUTO);		// Автоматический режим тоже
 }
 
 void tclacClimate::set_horizontal_swing_direction(HorizontalSwingDirection direction) {
