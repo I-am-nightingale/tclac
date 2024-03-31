@@ -1,7 +1,8 @@
 /**
 * Create by Miguel Ángel López on 20/07/19
 * and modify by xaxexa
-* and finally made it by Solovey 13.08.2023
+* Refactoring & component making
+* Соловей с паяльником 15.03.2024
 **/
 
 #ifndef TCL_ESP_TCL_H
@@ -138,6 +139,7 @@ class tclacClimate : public climate::Climate, public esphome::uart::UARTDevice, 
 		void set_vertical_swing_direction(VerticalSwingDirection direction);
 		void set_horizontal_swing_direction(HorizontalSwingDirection direction);
 		void set_supported_modes(const std::set<esphome::climate::ClimateMode> &modes);
+		void set_supported_fan_modes(const std::set<esphome::climate::ClimateFanMode> &modes);
 		void set_supported_swing_modes(const std::set<esphome::climate::ClimateSwingMode> &modes);
 		
 		
@@ -145,10 +147,11 @@ class tclacClimate : public climate::Climate, public esphome::uart::UARTDevice, 
 		GPIOPin *rx_led_pin_;
 		GPIOPin *tx_led_pin_;
 		ClimateTraits traits() override;
+//		std::set<ClimateMode> supported_modes_{};
 		AirflowVerticalDirection vertical_direction_;
 		AirflowHorizontalDirection horizontal_direction_;
 		VerticalSwingDirection vertical_swing_direction_;
-		std::set<ClimateSwingMode> supported_swing_modes_{};
+//		std::set<ClimateSwingMode> supported_swing_modes_{};
 		HorizontalSwingDirection horizontal_swing_direction_;
 };
 

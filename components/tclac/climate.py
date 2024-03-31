@@ -9,7 +9,7 @@ from esphome.const import (
     CONF_MAX_TEMPERATURE,
     CONF_MIN_TEMPERATURE,
     CONF_SUPPORTED_MODES,
-    CONF_SUPPORTED_PRESETS,
+    CONF_SUPPORTED_FAN_MODES,
     CONF_SUPPORTED_SWING_MODES,
 )
 
@@ -17,7 +17,6 @@ from esphome.components.climate import (
     ClimateMode,
     ClimatePreset,
     ClimateSwingMode,
-    CONF_CURRENT_TEMPERATURE,
 )
 
 AUTO_LOAD = ["climate"]
@@ -26,7 +25,6 @@ DEPENDENCIES = ["climate", "uart"]
 CONF_RX_LED = "rx_led"
 CONF_TX_LED = "tx_led"
 CONF_DISPLAY = "show_display"
-CONF_USE_OLED = "use_oled_display"
 CONF_MODULE_DISPLAY = "show_module_display"
 CONF_VERTICAL_AIRFLOW = "vertical_airflow"
 CONF_HORIZONTAL_AIRFLOW = "horizontal_airflow"
@@ -35,6 +33,48 @@ CONF_HORIZONTAL_SWING_MODE = "horizontal_swing_mode"
 
 tclac_ns = cg.esphome_ns.namespace("tclac")
 tclacClimate = tclac_ns.class_("tclacClimate", uart.UARTDevice, climate.Climate, cg.PollingComponent)
+
+SUPPORTED_FAN_MODES_OPTIONS = {
+    "AUTO": ClimateMode.CLIMATE_FAN_AUTO,  # Доступен всегда
+    "QUIET": ClimateMode.CLIMATE_FAN_QUIET,
+    "LOW": ClimateMode.CLIMATE_FAN_LOW,
+    "MIDDLE": ClimateMode.CLIMATE_FAN_MIDDLE,
+    "MEDIUM": ClimateMode.CLIMATE_FAN_MEDIUM,
+    "HIGH": ClimateMode.CLIMATE_FAN_HIGH,
+    "FOCUS": ClimateMode.CLIMATE_FAN_FOCUS,
+    "DIFFUSE": ClimateMode.CLIMATE_FAN_DIFFUSE,
+}
+
+SUPPORTED_SWING_MODES_OPTIONS = {
+    "OFF": ClimateSwingMode.CLIMATE_SWING_OFF,  # Доступен всегда
+    "VERTICAL": ClimateSwingMode.CLIMATE_SWING_VERTICAL,
+    "HORIZONTAL": ClimateSwingMode.CLIMATE_SWING_HORIZONTAL,
+    "BOTH": ClimateSwingMode.CLIMATE_SWING_BOTH,
+}
+
+SUPPORTED_CLIMATE_MODES_OPTIONS = {
+    "OFF": ClimateMode.CLIMATE_MODE_OFF,  # Доступен всегда
+    "AUTO": ClimateMode.CLIMATE_MODE_AUTO,  # Доступен всегда
+    "COOL": ClimateMode.CLIMATE_MODE_COOL,
+    "HEAT": ClimateMode.CLIMATE_MODE_HEAT,
+    "DRY": ClimateMode.CLIMATE_MODE_DRY,
+    "FAN_ONLY": ClimateMode.CLIMATE_MODE_FAN_ONLY,
+}
+
+VerticalSwingDirection = tclac_ns.enum("VerticalSwingDirection", True)
+VERTICAL_SWING_DIRECTION_OPTIONS = {
+    "UP_DOWN": VerticalSwingDirection.UPDOWN,
+    "UPSIDE": VerticalSwingDirection.UPSIDE,
+    "DOWNSIDE": VerticalSwingDirection.DOWNSIDE,
+}
+
+HorizontalSwingDirection = tclac_ns.enum("HorizontalSwingDirection", True)
+HORIZONTAL_SWING_DIRECTION_OPTIONS = {
+    "LEFT_RIGHT": HorizontalSwingDirection.LEFT_RIGHT,
+    "LEFTSIDE": HorizontalSwingDirection.LEFTSIDE,
+    "CENTER": HorizontalSwingDirection.CENTER,
+    "RIGHTSIDE": HorizontalSwingDirection.RIGHTSIDE,
+}
 
 AirflowVerticalDirection = tclac_ns.enum("AirflowVerticalDirection", True)
 AIRFLOW_VERTICAL_DIRECTION_OPTIONS = {
@@ -56,40 +96,6 @@ AIRFLOW_HORIZONTAL_DIRECTION_OPTIONS = {
     "MAX_RIGHT": AirflowHorizontalDirection.MAX_RIGHT,
 }
 
-VerticalSwingDirection = tclac_ns.enum("VerticalSwingDirection", True)
-VERTICAL_SWING_DIRECTION_OPTIONS = {
-    "UP_DOWN": VerticalSwingDirection.UPDOWN,
-    "UPSIDE": VerticalSwingDirection.UPSIDE,
-    "DOWNSIDE": VerticalSwingDirection.DOWNSIDE,
-}
-
-HorizontalSwingDirection = tclac_ns.enum("HorizontalSwingDirection", True)
-HORIZONTAL_SWING_DIRECTION_OPTIONS = {
-    "LEFT_RIGHT": HorizontalSwingDirection.LEFT_RIGHT,
-    "LEFTSIDE": HorizontalSwingDirection.LEFTSIDE,
-    "CENTER": HorizontalSwingDirection.CENTER,
-    "RIGHTSIDE": HorizontalSwingDirection.RIGHTSIDE,
-}
-
-SUPPORTED_SWING_MODES_OPTIONS = {
-    "OFF": ClimateSwingMode.CLIMATE_SWING_OFF,
-    "VERTICAL": ClimateSwingMode.CLIMATE_SWING_VERTICAL,
-    "HORIZONTAL": ClimateSwingMode.CLIMATE_SWING_HORIZONTAL,
-    "BOTH": ClimateSwingMode.CLIMATE_SWING_BOTH,
-}
-
-SUPPORTED_CLIMATE_MODES_OPTIONS = {
-    "OFF": ClimateMode.CLIMATE_MODE_OFF,  # always available
-    "AUTO": ClimateMode.CLIMATE_MODE_AUTO,  # always available
-    "COOL": ClimateMode.CLIMATE_MODE_COOL,
-    "HEAT": ClimateMode.CLIMATE_MODE_HEAT,
-    "DRY": ClimateMode.CLIMATE_MODE_DRY,
-    "FAN_ONLY": ClimateMode.CLIMATE_MODE_FAN_ONLY,
-}
-
-# Упрощаем себе житзнь и даем спискам названия покороче
-validate_presets = cv.enum(AIRFLOW_HORIZONTAL_DIRECTION_OPTIONS, upper=True)
-
 CONFIG_SCHEMA = cv.All(
     climate.CLIMATE_SCHEMA.extend(
         {
@@ -99,8 +105,9 @@ CONFIG_SCHEMA = cv.All(
             cv.Optional(CONF_RX_LED): pins.gpio_output_pin_schema,
             cv.Optional(CONF_TX_LED): pins.gpio_output_pin_schema,
             cv.Optional(CONF_MODULE_DISPLAY, default=True): cv.boolean,
-            cv.Optional(CONF_SUPPORTED_MODES): cv.ensure_list(cv.enum(SUPPORTED_CLIMATE_MODES_OPTIONS, upper=True)),
-            cv.Optional(CONF_SUPPORTED_SWING_MODES,default=["OFF","VERTICAL","HORIZONTAL","BOTH",],): cv.ensure_list(cv.enum(SUPPORTED_SWING_MODES_OPTIONS, upper=True)), 
+            cv.Optional(CONF_SUPPORTED_SWING_MODES,default=["OFF","VERTICAL","HORIZONTAL","BOTH",],): cv.ensure_list(cv.enum(SUPPORTED_SWING_MODES_OPTIONS, upper=True)),
+            cv.Optional(CONF_SUPPORTED_MODES,default=["OFF","AUTO","COOL","HEAT","DRY","FAN_ONLY",],): cv.ensure_list(cv.enum(SUPPORTED_CLIMATE_MODES_OPTIONS, upper=True)),
+            cv.Optional(CONF_SUPPORTED_FAN_MODES,default=["AUTO","QUIET","LOW","MIDDLE","MEDIUM","HIGH","FOCUS","DIFFUSE",],): cv.ensure_list(cv.enum(SUPPORTED_FAN_MODES_OPTIONS, upper=True)),
         }
     )
     .extend(uart.UART_DEVICE_SCHEMA)
@@ -119,9 +126,9 @@ HorizontalAirflowAction = tclac_ns.class_("HorizontalAirflowAction", automation.
 VerticalSwingDirectionAction = tclac_ns.class_("VerticalSwingDirectionAction", automation.Action)
 HorizontalSwingDirectionAction = tclac_ns.class_("HorizontalSwingDirectionAction", automation.Action)
 
-# TCLAC_ACTION_BASE_SCHEMA = cv.Schema(
 TCLAC_ACTION_BASE_SCHEMA = automation.maybe_simple_id({cv.GenerateID(CONF_ID): cv.use_id(tclacClimate),})
 
+# Регистрация событий включения и отключения дисплея кондиционера
 @automation.register_action(
     "climate.tclac.display_on", DisplayOnAction, cv.Schema
 )
@@ -133,7 +140,7 @@ async def display_action_to_code(config, action_id, template_arg, args):
     var = cg.new_Pvariable(action_id, template_arg, paren)
     return var
 
-
+# Регистрация событий включения и отключения пищалки кондиционера
 @automation.register_action(
     "climate.tclac.beeper_on", BeeperOnAction, cv.Schema
 )
@@ -144,8 +151,8 @@ async def beeper_action_to_code(config, action_id, template_arg, args):
     paren = await cg.get_variable(config[CONF_ID])
     var = cg.new_Pvariable(action_id, template_arg, paren)
     return var
-    
 
+# Регистрация событий включения и отключения светодиодов связи модуля
 @automation.register_action(
     "climate.tclac.module_display_on", ModuleDisplayOnAction, cv.Schema
 )
@@ -157,8 +164,7 @@ async def module_display_action_to_code(config, action_id, template_arg, args):
     var = cg.new_Pvariable(action_id, template_arg, paren)
     return var
 
-
-# Set vertical airflow direction action
+# Регистрация события установки вертикальной фиксации заслонки
 @automation.register_action(
     "climate.tclac.set_vertical_airflow",
     VerticalAirflowAction,
@@ -179,7 +185,7 @@ async def tclac_set_vertical_airflow_to_code(config, action_id, template_arg, ar
     return var
 
 
-# Set horizontal airflow direction action
+# Регистрация события установки горизонтальной фиксации заслонок
 @automation.register_action(
     "climate.tclac.set_horizontal_airflow",
     HorizontalAirflowAction,
@@ -236,30 +242,33 @@ async def tclac_set_horizontal_swing_direction_to_code(config, action_id, templa
     return var
 
 
-
+# Добавление конфигурации в код
 def to_code(config):
     var = cg.new_Pvariable(config[CONF_ID])
     yield cg.register_component(var, config)
     yield uart.register_uart_device(var, config)
     yield climate.register_climate(var, config)
-    
-    if CONF_SUPPORTED_MODES in config:
-        cg.add(var.set_supported_modes(config[CONF_SUPPORTED_MODES]))
-    if CONF_SUPPORTED_SWING_MODES in config:
-        cg.add(var.set_supported_swing_modes(config[CONF_SUPPORTED_SWING_MODES]))
+
+    if CONF_USE_OLED in config:
+        cg.add_define("USE_OLED_DISPLAY")
     if CONF_BEEPER in config:
         cg.add(var.set_beeper_state(config[CONF_BEEPER]))
     if CONF_DISPLAY in config:
         cg.add(var.set_display_state(config[CONF_DISPLAY]))
+    if CONF_SUPPORTED_MODES in config:
+        cg.add(var.set_supported_modes(config[CONF_SUPPORTED_MODES]))
     if CONF_MODULE_DISPLAY in config:
         cg.add(var.set_module_display_state(config[CONF_MODULE_DISPLAY]))
-    if CONF_USE_OLED in config:
-        cg.add_define("USE_OLED_DISPLAY")
-    if CONF_RX_LED in config:
-        cg.add_define("CONF_RX_LED")
-        rx_led_pin = yield cg.gpio_pin_expression(config[CONF_RX_LED])
-        cg.add(var.set_rx_led_pin(rx_led_pin))
+    if CONF_SUPPORTED_FAN_MODES in config:
+        cg.add(var.set_supported_fan_modes(config[CONF_SUPPORTED_FAN_MODES]))
+    if CONF_SUPPORTED_SWING_MODES in config:
+        cg.add(var.set_supported_swing_modes(config[CONF_SUPPORTED_SWING_MODES]))
+
     if CONF_TX_LED in config:
         cg.add_define("CONF_TX_LED")
         tx_led_pin = yield cg.gpio_pin_expression(config[CONF_TX_LED])
         cg.add(var.set_tx_led_pin(tx_led_pin))
+    if CONF_RX_LED in config:
+        cg.add_define("CONF_RX_LED")
+        rx_led_pin = yield cg.gpio_pin_expression(config[CONF_RX_LED])
+        cg.add(var.set_rx_led_pin(rx_led_pin))

@@ -11,34 +11,29 @@ ClimateTraits tclacClimate::traits() {
 
 	traits.set_supports_action(false);
 
-	traits.set_supported_modes(
-	{
-		climate::CLIMATE_MODE_AUTO,
-		climate::CLIMATE_MODE_COOL,
-		climate::CLIMATE_MODE_DRY,
-		climate::CLIMATE_MODE_FAN_ONLY,
-		climate::CLIMATE_MODE_HEAT,
-		climate::CLIMATE_MODE_OFF
-	});
+//	traits.set_supported_modes(
+//	{
+//		climate::CLIMATE_MODE_AUTO,
+//		climate::CLIMATE_MODE_COOL,
+//		climate::CLIMATE_MODE_DRY,
+//		climate::CLIMATE_MODE_FAN_ONLY,
+//		climate::CLIMATE_MODE_HEAT,
+//		climate::CLIMATE_MODE_OFF
+//	});
 
-	traits.set_supported_fan_modes(
-	{
-		climate::CLIMATE_FAN_AUTO,			//	auto
-		climate::CLIMATE_FAN_QUIET,			//	silent
-		climate::CLIMATE_FAN_LOW,			//	|
-		climate::CLIMATE_FAN_MIDDLE,		//	||
-		climate::CLIMATE_FAN_MEDIUM,		//	|||
-		climate::CLIMATE_FAN_HIGH,			//	||||
-		climate::CLIMATE_FAN_FOCUS,			//	|||||
-		climate::CLIMATE_FAN_DIFFUSE		//	POWER [7]
-	});
-
-	//traits.set_supported_swing_modes({climate::CLIMATE_SWING_OFF,climate::CLIMATE_SWING_BOTH,climate::CLIMATE_SWING_VERTICAL,climate::CLIMATE_SWING_HORIZONTAL});
-	traits.set_supported_swing_modes(this->supported_swing_modes_);
+//	traits.set_supported_fan_modes(
+//	{
+//		climate::CLIMATE_FAN_AUTO,			//	auto
+//		climate::CLIMATE_FAN_QUIET,			//	silent
+//		climate::CLIMATE_FAN_LOW,			//	|
+//		climate::CLIMATE_FAN_MIDDLE,		//	||
+//		climate::CLIMATE_FAN_MEDIUM,		//	|||
+//		climate::CLIMATE_FAN_HIGH,			//	||||
+//		climate::CLIMATE_FAN_FOCUS,			//	|||||
+//		climate::CLIMATE_FAN_DIFFUSE		//	POWER [7]
+//	});
 	
-	if (!traits.get_supported_swing_modes().empty())
-		traits.add_supported_swing_mode(ClimateSwingMode::CLIMATE_SWING_OFF);
-
+	
 	traits.set_visual_min_temperature(MIN_SET_TEMPERATURE);
 	traits.set_visual_max_temperature(MAX_SET_TEMPERATURE);
 	traits.set_visual_temperature_step(STEP_TEMPERATURE);
@@ -51,8 +46,6 @@ ClimateTraits tclacClimate::traits() {
 
 void tclacClimate::setup() {
 
-//	Serial.begin(9600);
-//	ESP_LOGD("TCL" , "Started Serial");
 #ifdef CONF_RX_LED
 	this->rx_led_pin_->setup();
 	this->rx_led_pin_->digital_write(false);
@@ -213,7 +206,7 @@ void tclacClimate::control(const ClimateCall &call) {
 	dataTX[8]  = 0b00000000;//mute,0,turbo,health,mode(4)  0=cool 1=fan  2=dry 3=heat 4=auto 
 	dataTX[9]  = 0b00000000;//[9] = 0,0,0,0,temp(4) 31 - value
 	dataTX[10] = 0b00000000;//[10] = 0,timerindicator,swingv(3),fan(3) 0=auto 1=low 2=med 3=high
-	//																{0,2,3,5,0};
+							//																{0,2,3,5,0};
 	dataTX[11] = 0b00000000;
 	dataTX[32] = 0b00000000;
 	dataTX[33] = 0b00000000;
@@ -380,7 +373,7 @@ void tclacClimate::control(const ClimateCall &call) {
 		// А если в переключателе пусто- заполняем значением из последнего опроса состояния. Типа, ничего не поменялось.
 		switchvar = swing_mode;
 	}
-	
+	// Устанавливаем режим качания заслонок
 	switch(switchvar) {
 		case climate::CLIMATE_SWING_OFF:
 			dataTX[10]	+= 0b00000000;
@@ -399,7 +392,7 @@ void tclacClimate::control(const ClimateCall &call) {
 			dataTX[11]	+= 0b00001000;  
 			break;
 	}
-	//Выбираем режим для качания вертикальной заслонки
+	// Устанавливаем режим для качания вертикальной заслонки
 	switch(vertical_swing_direction_) {
 		case VerticalSwingDirection::UP_DOWN:
 			dataTX[32]	+= 0b00001000;
@@ -414,7 +407,7 @@ void tclacClimate::control(const ClimateCall &call) {
 			ESP_LOGD("TCL", "Vertical swing: downer");
 			break;
 	}
-	//Выбираем режим для качания горизонтальных заслонок
+	// Устанавливаем режим для качания горизонтальных заслонок
 	switch(horizontal_swing_direction_) {
 		case HorizontalSwingDirection::LEFT_RIGHT:
 			dataTX[33]	+= 0b00001000;
@@ -433,7 +426,7 @@ void tclacClimate::control(const ClimateCall &call) {
 			ESP_LOGD("TCL", "Horizontal swing: righter");
 			break;
 	}
-	//Выбираем положение фиксации вертикальной заслонки
+	// Устанавливаем положение фиксации вертикальной заслонки
 	switch(this->vertical_direction_) {
 		case AirflowVerticalDirection::LAST:
 			dataTX[32]	+= 0b00000000;
@@ -460,7 +453,7 @@ void tclacClimate::control(const ClimateCall &call) {
 			ESP_LOGD("TCL", "Vertical fix: down");
 			break;
 	}
-	//Выбираем положение фиксации горизонтальных заслонок
+	// Устанавливаем положение фиксации горизонтальных заслонок
 	switch(this->horizontal_direction_) {
 		case AirflowHorizontalDirection::LAST:
 			dataTX[33]	+= 0b00000000;
@@ -537,7 +530,7 @@ void tclacClimate::control(const ClimateCall &call) {
 
 	tclacClimate::sendData(dataTX, sizeof(dataTX));
 }
-
+// Отправка данных в кондиционер
 void tclacClimate::sendData(byte * message, byte size) {
 	tclacClimate::dataShow(1,1);
 	//Serial.write(message, size);
@@ -546,7 +539,7 @@ void tclacClimate::sendData(byte * message, byte size) {
 	ESP_LOGD("TCL", "Message to TCL sended...");
 	tclacClimate::dataShow(1,0);
 }
-
+// Преобразование байта в читабельнывй формат
 String tclacClimate::getHex(byte *message, byte size) {
 	String raw;
 	for (int i = 0; i < size; i++) {
@@ -555,7 +548,7 @@ String tclacClimate::getHex(byte *message, byte size) {
 	raw.toUpperCase();
 	return raw;
 }
-
+// Вычисление контрольной суммы
 byte tclacClimate::getChecksum(const byte * message, size_t size) {
 	byte position = size - 1;
 	byte crc = 0;
@@ -563,7 +556,7 @@ byte tclacClimate::getChecksum(const byte * message, size_t size) {
 		crc ^= message[i];
 	return crc;
 }
-
+// Мигаем светодиодами
 void tclacClimate::dataShow(bool flow, bool shine) {
 	if (module_display_status_){
 		if (flow == 0){
@@ -593,11 +586,6 @@ void tclacClimate::dataShow(bool flow, bool shine) {
 
 // Действия с данными из конфига
 
-//void tclacClimate::set_supported_modes(const std::set<climate::ClimateMode> &modes) {
-//  this->traits.set_supported_modes(modes);
-//  this->traits.add_supported_mode(climate::CLIMATE_MODE_OFF);        // Always available
-//  this->traits.add_supported_mode(climate::CLIMATE_MODE_HEAT_COOL);  // Always available
-//}
 
 void tclacClimate::set_beeper_state(bool state) {
 	this->beeper_status_ = state;
@@ -635,13 +623,26 @@ void tclacClimate::set_vertical_swing_direction(VerticalSwingDirection direction
 	this->vertical_swing_direction_ = direction;
 }
 
+void tclacClimate::set_supported_modes(const std::set<climate::ClimateMode> &modes) {
+	this->traits.set_supported_modes(modes);
+	this->traits.add_supported_mode(climate::CLIMATE_MODE_OFF);			// Выключенный режим доступен всегда
+	this->traits.add_supported_mode(climate::CLIMATE_MODE_AUTO);		// Автоматический режим тоже
+}
+
 void tclacClimate::set_horizontal_swing_direction(HorizontalSwingDirection direction) {
 	this->horizontal_swing_direction_ = direction;
 }
 
-void tclacClimate::set_supported_swing_modes(const std::set<climate::ClimateSwingMode> &modes) {
-	this->supported_swing_modes_ = modes;
+void tclacClimate::set_supported_fan_modes(const std::set<climate::ClimateFanMode> &modes){
+	this->traits.set_supported_fan_modes(modes);
+	this->traits.add_supported_fan_mode(climate::CLIMATE_FAN_AUTO);		// Автоматический режим доступен всегда
 }
+
+void tclacClimate::set_supported_swing_modes(const std::set<climate::ClimateSwingMode> &modes) {
+	this->traits.set_supported_swing_modes(modes);
+	this->traits.add_supported_swing_mode(climate::CLIMATE_SWING_OFF);	// Выключенный режим доступен всегда
+}
+
 
 
 // Заготовки функций запроса состояния, может пригодиться в будущем, если делать обратную связь. Очень не хочется, будет очень костыльно.
