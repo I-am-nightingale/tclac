@@ -143,16 +143,16 @@ class tclacClimate : public climate::Climate, public esphome::uart::UARTDevice, 
 		void set_supported_fan_modes(const std::set<esphome::climate::ClimateFanMode> &modes);
 		void set_supported_swing_modes(const std::set<esphome::climate::ClimateSwingMode> &modes);
 		
-		
 	protected:
 		GPIOPin *rx_led_pin_;
 		GPIOPin *tx_led_pin_;
 		ClimateTraits traits() override;
-//		std::set<ClimateMode> supported_modes_{};
+		std::set<ClimateMode> supported_modes_{};
 		AirflowVerticalDirection vertical_direction_;
+		std::set<ClimateFanMode> supported_fan_modes_{};
 		AirflowHorizontalDirection horizontal_direction_;
 		VerticalSwingDirection vertical_swing_direction_;
-//		std::set<ClimateSwingMode> supported_swing_modes_{};
+		std::set<ClimateSwingMode> supported_swing_modes_{};
 		HorizontalSwingDirection horizontal_swing_direction_;
 };
 

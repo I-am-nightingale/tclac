@@ -32,7 +32,15 @@ ClimateTraits tclacClimate::traits() {
 //		climate::CLIMATE_FAN_FOCUS,			//	|||||
 //		climate::CLIMATE_FAN_DIFFUSE		//	POWER [7]
 //	});
+
+	traits.set_supported_modes(this->supported_modes_);
+	traits.set_supported_fan_modes(this->supported_fan_modes_);
+	traits.set_supported_swing_modes(this->supported_swing_modes_);
 	
+	traits.add_supported_fan_mode(climate::CLIMATE_FAN_AUTO);	// Автоматический режим вентилятора доступен всегда
+	traits.add_supported_swing_mode(climate::CLIMATE_SWING_OFF);	// Выключенный режим качания заслонок доступен всегда
+	traits.add_supported_mode(climate::CLIMATE_MODE_OFF);		// Выключенный режим кондиционера доступен всегда
+	traits.add_supported_mode(climate::CLIMATE_MODE_AUTO);		// Автоматический режим кондиционера тоже
 	
 	traits.set_visual_min_temperature(MIN_SET_TEMPERATURE);
 	traits.set_visual_max_temperature(MAX_SET_TEMPERATURE);
@@ -624,10 +632,7 @@ void tclacClimate::set_vertical_swing_direction(VerticalSwingDirection direction
 }
 
 void tclacClimate::set_supported_modes(const std::set<climate::ClimateMode> &modes) {
-	auto traits_ = climate::ClimateTraits();
-	this->traits_.set_supported_modes(modes);
-	this->traits_.add_supported_mode(climate::CLIMATE_MODE_OFF);		// Выключенный режим доступен всегда
-	this->traits_.add_supported_mode(climate::CLIMATE_MODE_AUTO);		// Автоматический режим тоже
+	this->supported_modes_ = modes;
 }
 
 void tclacClimate::set_horizontal_swing_direction(HorizontalSwingDirection direction) {
@@ -635,18 +640,12 @@ void tclacClimate::set_horizontal_swing_direction(HorizontalSwingDirection direc
 }
 
 void tclacClimate::set_supported_fan_modes(const std::set<climate::ClimateFanMode> &modes){
-	auto traits_ = climate::ClimateTraits();
-	this->traits_.set_supported_fan_modes(modes);
-	this->traits_.add_supported_fan_mode(climate::CLIMATE_FAN_AUTO);	// Автоматический режим доступен всегда
+	this->supported_fan_modes_ = modes;
 }
 
 void tclacClimate::set_supported_swing_modes(const std::set<climate::ClimateSwingMode> &modes) {
-	auto traits_ = climate::ClimateTraits();
-	this->traits_.set_supported_swing_modes(modes);
-	this->traits_.add_supported_swing_mode(climate::CLIMATE_SWING_OFF);	// Выключенный режим доступен всегда
+	this->supported_swing_modes_ = modes;
 }
-
-
 
 // Заготовки функций запроса состояния, может пригодиться в будущем, если делать обратную связь. Очень не хочется, будет очень костыльно.
 
