@@ -249,8 +249,6 @@ def to_code(config):
     yield uart.register_uart_device(var, config)
     yield climate.register_climate(var, config)
 
-    if CONF_USE_OLED in config:
-        cg.add_define("USE_OLED_DISPLAY")
     if CONF_BEEPER in config:
         cg.add(var.set_beeper_state(config[CONF_BEEPER]))
     if CONF_DISPLAY in config:
