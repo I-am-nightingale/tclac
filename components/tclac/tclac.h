@@ -102,6 +102,7 @@ class tclacClimate : public climate::Climate, public esphome::uart::UARTDevice, 
 		bool beeper_status_;
 		bool display_status_;
 		bool module_display_status_;
+		esphome::climate::ClimateTraits traits_;
 		
 	public:
 
