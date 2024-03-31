@@ -100,11 +100,6 @@ wifi:
   ap:
     ssid: "${device_name} Fallback Hotspot"
     password: "${recovery_pass}"
-# Если требуется ручное указание настроек сети- это здесь:
-  manual_ip:
-    static_ip: 192.168.1.204
-    gateway: 192.168.1.1
-    subnet: 255.255.255.0
 
 captive_portal:
 
