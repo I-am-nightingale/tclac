@@ -83,6 +83,9 @@ esphome:
 
 uart:
   baud_rate: 9600
+  data_bits: 8
+  parity: EVEN
+  stop_bits: 1
   rx_pin: ${uart_rx}
   tx_pin: ${uart_tx}
 
