@@ -24,6 +24,9 @@ substitutions:
 # иначе работать не будет совсем и можно писать сюда вообще что угодною. Для тех, кто просил их удалить.
   receive_led: GPIO6
   transmit_led: GPIO4
+# Для ESP32 WROOM32 можно использовать синий светодиод, который висит на GPIO2
+#  receive_led: GPIO2
+#  transmit_led: GPIO2
 
 packages:
   remote_package:
@@ -47,8 +50,15 @@ esp8266:
 #  framework:
 #    type: arduino
 
+# Esp32 WROOM32 - закоментировать фрагмент с esp8266 и esp32
+#esphome:
+#  platform: ESP32
+#  board: nodemcu-32s
+
+
 # Светодиод статуса. Включать по желанию при наличии свободных пинов
 #status_led:
 #  pin:
+# Для Wsp32 WROOM32 можно использовать GPIO2
 #    number: GPIO5
 #    inverted: false
