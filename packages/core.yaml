@@ -179,11 +179,11 @@ switch:
     on_turn_on:
       then:
         lambda: !lambda |-
-          id(${device_name}climate).set_force_mode(true);
+          id(${device_name}climate).set_force_mode_state(true);
     on_turn_off:
       then:
         lambda: !lambda |-
-          id(${device_name}climate).set_force_mode(false);
+          id(${device_name}climate).set_force_mode_state(false);
 
 # - Выпадающие списки
 select:
