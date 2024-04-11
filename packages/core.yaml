@@ -203,7 +203,7 @@ select:
       - "В нижней половине"
     optimistic: true
     restore_value: true
-    set_action:
+    on_value:
       then:
         lambda: !lambda |-
           if (id(vswing).active_index() == 0){
@@ -226,7 +226,7 @@ select:
       - "В правой части"
     optimistic: true
     restore_value: true
-    set_action:
+    on_value:
       then:
         lambda: !lambda |-
           if (id(hswing).active_index() == 0){
@@ -253,7 +253,7 @@ select:
       - "До упора вниз"
     optimistic: true
     restore_value: true
-    set_action:
+    on_value:
       then:
         lambda: !lambda |-
           if (id(vfixing).active_index() == 0){
