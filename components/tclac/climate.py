@@ -25,6 +25,7 @@ DEPENDENCIES = ["climate", "uart"]
 CONF_RX_LED = "rx_led"
 CONF_TX_LED = "tx_led"
 CONF_DISPLAY = "show_display"
+CONF_FORCE_MODE = "force_mode"
 CONF_MODULE_DISPLAY = "show_module_display"
 CONF_VERTICAL_AIRFLOW = "vertical_airflow"
 CONF_HORIZONTAL_AIRFLOW = "horizontal_airflow"
@@ -104,6 +105,7 @@ CONFIG_SCHEMA = cv.All(
             cv.Optional(CONF_DISPLAY, default=True): cv.boolean,
             cv.Optional(CONF_RX_LED): pins.gpio_output_pin_schema,
             cv.Optional(CONF_TX_LED): pins.gpio_output_pin_schema,
+            cv.Optional(CONF_FORCE_MODE, default=True): cv.boolean,
             cv.Optional(CONF_MODULE_DISPLAY, default=True): cv.boolean,
             cv.Optional(CONF_SUPPORTED_SWING_MODES,default=["OFF","VERTICAL","HORIZONTAL","BOTH",],): cv.ensure_list(cv.enum(SUPPORTED_SWING_MODES_OPTIONS, upper=True)),
             cv.Optional(CONF_SUPPORTED_MODES,default=["OFF","AUTO","COOL","HEAT","DRY","FAN_ONLY",],): cv.ensure_list(cv.enum(SUPPORTED_CLIMATE_MODES_OPTIONS, upper=True)),
@@ -114,7 +116,8 @@ CONFIG_SCHEMA = cv.All(
     .extend(cv.COMPONENT_SCHEMA)
 )
 
-
+ForceOnAction = tclac_ns.class_("ForceOnAction", automation.Action)
+ForceOffAction = tclac_ns.class_("ForceOffAction", automation.Action)
 BeeperOnAction = tclac_ns.class_("BeeperOnAction", automation.Action)
 BeeperOffAction = tclac_ns.class_("BeeperOffAction", automation.Action)
 DisplayOnAction = tclac_ns.class_("DisplayOnAction", automation.Action)
@@ -160,6 +163,18 @@ async def beeper_action_to_code(config, action_id, template_arg, args):
     "climate.tclac.module_display_off", ModuleDisplayOffAction, cv.Schema
 )
 async def module_display_action_to_code(config, action_id, template_arg, args):
+    paren = await cg.get_variable(config[CONF_ID])
+    var = cg.new_Pvariable(action_id, template_arg, paren)
+    return var
+    
+# Регистрация событий включения и отключения принудительного применения настроек
+@automation.register_action(
+    "climate.tclac.force_mode_on", ForceOnAction, cv.Schema
+)
+@automation.register_action(
+    "climate.tclac.force_mode_off", ForceOffAction, cv.Schema
+)
+async def force_mode_action_to_code(config, action_id, template_arg, args):
     paren = await cg.get_variable(config[CONF_ID])
     var = cg.new_Pvariable(action_id, template_arg, paren)
     return var
@@ -253,6 +268,8 @@ def to_code(config):
         cg.add(var.set_beeper_state(config[CONF_BEEPER]))
     if CONF_DISPLAY in config:
         cg.add(var.set_display_state(config[CONF_DISPLAY]))
+    if CONF_FORCE_MODE in config:
+        cg.add(var.set_force_mode_state(config[CONF_FORCE_MODE]))
     if CONF_SUPPORTED_MODES in config:
         cg.add(var.set_supported_modes(config[CONF_SUPPORTED_MODES]))
     if CONF_MODULE_DISPLAY in config:

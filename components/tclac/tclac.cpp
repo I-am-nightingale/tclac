@@ -516,6 +516,7 @@ void tclacClimate::control(const ClimateCall &call) {
 
 	tclacClimate::sendData(dataTX, sizeof(dataTX));
 }
+
 // Отправка данных в кондиционер
 void tclacClimate::sendData(byte * message, byte size) {
 	tclacClimate::dataShow(1,1);
@@ -525,6 +526,7 @@ void tclacClimate::sendData(byte * message, byte size) {
 	ESP_LOGD("TCL", "Message to TCL sended...");
 	tclacClimate::dataShow(1,0);
 }
+
 // Преобразование байта в читабельнывй формат
 String tclacClimate::getHex(byte *message, byte size) {
 	String raw;
@@ -534,6 +536,7 @@ String tclacClimate::getHex(byte *message, byte size) {
 	raw.toUpperCase();
 	return raw;
 }
+
 // Вычисление контрольной суммы
 byte tclacClimate::getChecksum(const byte * message, size_t size) {
 	byte position = size - 1;
@@ -542,6 +545,7 @@ byte tclacClimate::getChecksum(const byte * message, size_t size) {
 		crc ^= message[i];
 	return crc;
 }
+
 // Мигаем светодиодами
 void tclacClimate::dataShow(bool flow, bool shine) {
 	if (module_display_status_){
@@ -580,6 +584,13 @@ void tclacClimate::set_beeper_state(bool state) {
 void tclacClimate::set_display_state(bool state) {
 	this->display_status_ = state;
 }
+
+// Получение состояния режима принудительного применения настроек
+void tclacClimate::set_force_mode_state(bool state) {
+	this->force_mode_status_ = state;
+}
+
+
 // Получение пина светодиода приема данных
 #ifdef CONF_RX_LED
 void tclacClimate::set_rx_led_pin(GPIOPin *rx_led_pin) {

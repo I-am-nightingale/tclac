@@ -168,6 +168,22 @@ switch:
       then:
         lambda: !lambda |-
           id(${device_name}climate).set_module_display_state(false);
+          
+  - name: Force config
+    platform: template
+    device_class: switch
+    id: force_mode
+    entity_category: config
+    restore_mode: RESTORE_DEFAULT_ON
+    optimistic: true
+    on_turn_on:
+      then:
+        lambda: !lambda |-
+          id(${device_name}climate).set_force_mode(true);
+    on_turn_off:
+      then:
+        lambda: !lambda |-
+          id(${device_name}climate).set_force_mode(false);
 
 # - Выпадающие списки
 select:
@@ -224,12 +240,12 @@ select:
     id: vfixing
     entity_category: config
     options:
-      - Last
-      - Max_Up
-      - Up
-      - Center
-      - Down
-      - Max_Down
+      - "Последнее положение"
+      - "До упора вверх"
+      - "В верхней половине"
+      - "По середине"
+      - "В нижней половине"
+      - "До упора вниз"
     optimistic: true
     restore_value: true
     set_action:

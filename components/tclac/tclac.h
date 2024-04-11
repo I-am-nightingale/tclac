@@ -101,6 +101,7 @@ class tclacClimate : public climate::Climate, public esphome::uart::UARTDevice, 
 		// Инициализация и начальное наполнение переменных состоянй переключателей
 		bool beeper_status_;
 		bool display_status_;
+		bool force_mode_status_;
 		bool module_display_status_;
 		esphome::climate::ClimateTraits traits_;
 		
@@ -110,10 +111,10 @@ class tclacClimate : public climate::Climate, public esphome::uart::UARTDevice, 
 			checksum = 0;
 		}
 
-		void setup() override;
-		void loop() override;
-		void update() override;
 		void readData();
+		void loop() override;
+		void setup() override;
+		void update() override;
 		void dataShow(bool flow, bool shine);
 		void sendData(byte * message, byte size);
 		static String getHex(byte *message, byte size);
@@ -130,8 +131,9 @@ class tclacClimate : public climate::Climate, public esphome::uart::UARTDevice, 
 		//VerticalSwingDirection tclacClimate::get_vertical_swing_direction() const;
 		//HorizontalSwingDirection tclacClimate::get_horizontal_swing_direction() const;
 
-		void set_beeper_state(bool state);		
+		void set_beeper_state(bool state);
 		void set_display_state(bool state);
+		void set_force_mode_state(bool state);
 		void set_rx_led_pin(GPIOPin *rx_led_pin);
 		void set_tx_led_pin(GPIOPin *tx_led_pin);
 		void set_module_display_state(bool state);
