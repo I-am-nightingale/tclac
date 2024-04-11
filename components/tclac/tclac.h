@@ -105,6 +105,12 @@ class tclacClimate : public climate::Climate, public esphome::uart::UARTDevice, 
 		bool module_display_status_;
 		esphome::climate::ClimateTraits traits_;
 		
+		uint8_t switch_climate_mode = 0;
+		uint8_t switch_fan_mode = 0;
+		uint8_t switch_swing_mode = 0;
+		int target_temperature_set = 0;
+		bool allow_take_control = false;
+		
 	public:
 
 		tclacClimate() : PollingComponent(5 * 1000) {
