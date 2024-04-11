@@ -181,7 +181,7 @@ void tclacClimate::readData() {
 	// Публикуем данные
 	this->publish_state();
 	allow_take_control = true;
-    }
+   }
 
 // Climate control
 void tclacClimate::control(const ClimateCall &call) {
@@ -212,7 +212,6 @@ void tclacClimate::control(const ClimateCall &call) {
 	} else {
 		target_temperature_set = 31-(int)target_temperature;
 	}
-	
 	
 	takeControl();
 	allow_take_control = true;
@@ -406,7 +405,7 @@ void tclacClimate::takeControl() {
 			break;
 	}
 	// Устанавливаем положение фиксации вертикальной заслонки
-	switch(this->vertical_direction_) {
+	switch(vertical_direction_) {
 		case AirflowVerticalDirection::LAST:
 			dataTX[32]	+= 0b00000000;
 			ESP_LOGD("TCL", "Vertical fix: last position");
@@ -433,7 +432,7 @@ void tclacClimate::takeControl() {
 			break;
 	}
 	// Устанавливаем положение фиксации горизонтальных заслонок
-	switch(this->horizontal_direction_) {
+	switch(horizontal_direction_) {
 		case AirflowHorizontalDirection::LAST:
 			dataTX[33]	+= 0b00000000;
 			ESP_LOGD("TCL", "Horizontal fix: last position");
@@ -643,7 +642,7 @@ void tclacClimate::set_supported_modes(const std::set<climate::ClimateMode> &mod
 }
 // Получение режима качания горизонтальных заслонок
 void tclacClimate::set_horizontal_swing_direction(HorizontalSwingDirection direction) {
-	this->horizontal_swing_direction_ = direction;
+	horizontal_swing_direction_ = direction;
 	if (force_mode_status_){
 		if (allow_take_control){
 			tclacClimate::takeControl();
