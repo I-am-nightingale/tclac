@@ -586,11 +586,6 @@ void tclacClimate::set_display_state(bool state) {
 // Получение состояния режима принудительного применения настроек
 void tclacClimate::set_force_mode_state(bool state) {
 	this->force_mode_status_ = state;
-	if (force_mode_status_){
-		if (allow_take_control){
-			tclacClimate::takeControl();
-		}
-	}
 }
 
 // Получение пина светодиода приема данных
