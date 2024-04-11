@@ -579,6 +579,9 @@ void tclacClimate::dataShow(bool flow, bool shine) {
 // Получение состояния пищалки
 void tclacClimate::set_beeper_state(bool state) {
 	this->beeper_status_ = state;
+	if (set_force_mode_state){
+		tclacClimate::control();
+	}
 }
 // Получение состояния дисплея кондиционера
 void tclacClimate::set_display_state(bool state) {
