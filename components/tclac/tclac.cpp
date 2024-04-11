@@ -194,7 +194,7 @@ void tclacClimate::control(const ClimateCall &call) {
 	if (call.get_fan_mode().has_value()){
 		switch_fan_mode = call.get_fan_mode().value();
 	} else {
-		switch_fan_mode = fan_mode;
+		switch_fan_mode = fan_mode.value();
 	}
 	
 	// Запрашиваем данные из переключателя режимов качания заслонок
