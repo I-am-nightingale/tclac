@@ -284,7 +284,7 @@ select:
       - "До упора вправо"
     optimistic: true
     restore_value: true
-    set_action:
+    on_value:
       then:
         lambda: !lambda |-
           if (id(hfixing).active_index() == 0){
