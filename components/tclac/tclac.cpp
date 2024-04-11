@@ -180,6 +180,7 @@ void tclacClimate::readData() {
 	}
 	// Публикуем данные
 	this->publish_state();
+	allow_take_control = true;
     }
 
 // Climate control
@@ -214,6 +215,7 @@ void tclacClimate::control(const ClimateCall &call) {
 	
 	
 	takeControl();
+	allow_take_control = true;
 }
 	
 	
