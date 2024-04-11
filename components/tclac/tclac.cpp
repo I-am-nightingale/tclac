@@ -185,6 +185,11 @@ void tclacClimate::readData() {
 
 // Climate control
 void tclacClimate::control(const ClimateCall &call) {
+	takeControl();
+}
+	
+	
+void tclacClimate::takeControl() {
 	
 	uint8_t switchvar = 0;
 	
@@ -580,7 +585,7 @@ void tclacClimate::dataShow(bool flow, bool shine) {
 void tclacClimate::set_beeper_state(bool state) {
 	this->beeper_status_ = state;
 	if (force_mode_status_){
-		tclacClimate::control();
+		tclacClimate::takeControl();
 	}
 }
 // Получение состояния дисплея кондиционера
