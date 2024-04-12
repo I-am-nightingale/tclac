@@ -12,7 +12,6 @@ from esphome.const import (
     CONF_TEMPERATURE_STEP,
     CONF_SUPPORTED_PRESETS,
     CONF_TARGET_TEMPERATURE,
-    CONF_CURRENT_TEMPERATURE,
     CONF_SUPPORTED_FAN_MODES,
     CONF_SUPPORTED_SWING_MODES,
 )
@@ -21,6 +20,7 @@ from esphome.components.climate import (
     ClimateMode,
     ClimatePreset,
     ClimateSwingMode,
+    CONF_CURRENT_TEMPERATURE,
 )
 
 AUTO_LOAD = ["climate"]
