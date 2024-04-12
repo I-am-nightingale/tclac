@@ -6,6 +6,7 @@ from esphome.const import (
     CONF_ID,
     CONF_LEVEL,
     CONF_BEEPER,
+    CONF_VISUAL,
     CONF_MAX_TEMPERATURE,
     CONF_MIN_TEMPERATURE,
     CONF_SUPPORTED_MODES,
