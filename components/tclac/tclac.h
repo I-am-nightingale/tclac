@@ -156,12 +156,14 @@ class tclacClimate : public climate::Climate, public esphome::uart::UARTDevice, 
 		GPIOPin *tx_led_pin_;
 		ClimateTraits traits() override;
 		std::set<ClimateMode> supported_modes_{};
+		std::set<ClimatePreset> supported_presets_{};
 		AirflowVerticalDirection vertical_direction_;
 		std::set<ClimateFanMode> supported_fan_modes_{};
 		AirflowHorizontalDirection horizontal_direction_;
 		VerticalSwingDirection vertical_swing_direction_;
 		std::set<ClimateSwingMode> supported_swing_modes_{};
 		HorizontalSwingDirection horizontal_swing_direction_;
+		
 };
 
 }

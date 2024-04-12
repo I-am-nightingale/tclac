@@ -10,6 +10,9 @@ from esphome.const import (
     CONF_MIN_TEMPERATURE,
     CONF_SUPPORTED_MODES,
     CONF_TEMPERATURE_STEP,
+    CONF_SUPPORTED_PRESETS,
+    CONF_TARGET_TEMPERATURE,
+    CONF_CURRENT_TEMPERATURE,
     CONF_SUPPORTED_FAN_MODES,
     CONF_SUPPORTED_SWING_MODES,
 )
@@ -69,6 +72,13 @@ SUPPORTED_CLIMATE_MODES_OPTIONS = {
     "FAN_ONLY": ClimateMode.CLIMATE_MODE_FAN_ONLY,
 }
 
+SUPPORTED_CLIMATE_PRESETS_OPTIONS = {
+    "NONE": ClimatePreset.CLIMATE_PRESET_NONE,
+    "ECO": ClimatePreset.CLIMATE_PRESET_ECO,
+    "BOOST": ClimatePreset.CLIMATE_PRESET_BOOST,
+    "SLEEP": ClimatePreset.CLIMATE_PRESET_SLEEP,
+    "COMFORT": ClimatePreset.CLIMATE_PRESET_COMFORT,
+
 VerticalSwingDirection = tclac_ns.enum("VerticalSwingDirection", True)
 VERTICAL_SWING_DIRECTION_OPTIONS = {
     "UP_DOWN": VerticalSwingDirection.UPDOWN,
@@ -104,6 +114,7 @@ AIRFLOW_HORIZONTAL_DIRECTION_OPTIONS = {
     "MAX_RIGHT": AirflowHorizontalDirection.MAX_RIGHT,
 }
 
+# Проверка конфигурации интерфейса и принятие значений по умолчанию
 def validate_visual(config):
     if CONF_VISUAL in config:
         visual_config = config[CONF_VISUAL]
@@ -129,7 +140,7 @@ def validate_visual(config):
         config[CONF_VISUAL] = {CONF_MIN_TEMPERATURE: TCLAC_MIN_TEMPERATURE,CONF_MAX_TEMPERATURE: TCLAC_MAX_TEMPERATURE,CONF_TEMPERATURE_STEP: {CONF_TARGET_TEMPERATURE: TCLAC_TARGET_TEMPERATURE_STEP,CONF_CURRENT_TEMPERATURE: TCLAC_CURRENT_TEMPERATURE_STEP,},}
     return config
 
-# Проверка данных конфигурации и принятие значений по умолчанию
+# Проверка конфигурации компонента и принятие значений по умолчанию
 CONFIG_SCHEMA = cv.All(
     climate.CLIMATE_SCHEMA.extend(
         {
@@ -144,6 +155,7 @@ CONFIG_SCHEMA = cv.All(
             cv.Optional(CONF_VERTICAL_SWING_MODE, default="UP_DOWN"): cv.ensure_list(cv.enum(VERTICAL_SWING_DIRECTION_OPTIONS, upper=True)),
             cv.Optional(CONF_HORIZONTAL_AIRFLOW, default="CENTER"): cv.ensure_list(cv.enum(AIRFLOW_HORIZONTAL_DIRECTION_OPTIONS, upper=True)),
             cv.Optional(CONF_HORIZONTAL_SWING_MODE, default="LEFT_RIGHT"): cv.ensure_list(cv.enum(HORIZONTAL_SWING_DIRECTION_OPTIONS, upper=True)),
+            cv.Optional(CONF_SUPPORTED_PRESETS,default=["NONE","ECO","BOOST","SLEEP",],): cv.ensure_list(cv.enum(SUPPORTED_CLIMATE_PRESETS_OPTIONS, upper=True)),
             cv.Optional(CONF_SUPPORTED_SWING_MODES,default=["OFF","VERTICAL","HORIZONTAL","BOTH",],): cv.ensure_list(cv.enum(SUPPORTED_SWING_MODES_OPTIONS, upper=True)),
             cv.Optional(CONF_SUPPORTED_MODES,default=["OFF","AUTO","COOL","HEAT","DRY","FAN_ONLY",],): cv.ensure_list(cv.enum(SUPPORTED_CLIMATE_MODES_OPTIONS, upper=True)),
             cv.Optional(CONF_SUPPORTED_FAN_MODES,default=["AUTO","QUIET","LOW","MIDDLE","MEDIUM","HIGH","FOCUS","DIFFUSE",],): cv.ensure_list(cv.enum(SUPPORTED_FAN_MODES_OPTIONS, upper=True)),
@@ -309,6 +321,8 @@ def to_code(config):
         cg.add(var.set_force_mode_state(config[CONF_FORCE_MODE]))
     if CONF_SUPPORTED_MODES in config:
         cg.add(var.set_supported_modes(config[CONF_SUPPORTED_MODES]))
+    if CONF_SUPPORTED_PRESETS in config:
+        cg.add(var.set_supported_presets(config[CONF_SUPPORTED_PRESETS]))
     if CONF_MODULE_DISPLAY in config:
         cg.add(var.set_module_display_state(config[CONF_MODULE_DISPLAY]))
     if CONF_SUPPORTED_FAN_MODES in config:
