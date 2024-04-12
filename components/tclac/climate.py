@@ -78,6 +78,7 @@ SUPPORTED_CLIMATE_PRESETS_OPTIONS = {
     "BOOST": ClimatePreset.CLIMATE_PRESET_BOOST,
     "SLEEP": ClimatePreset.CLIMATE_PRESET_SLEEP,
     "COMFORT": ClimatePreset.CLIMATE_PRESET_COMFORT,
+}
 
 VerticalSwingDirection = tclac_ns.enum("VerticalSwingDirection", True)
 VERTICAL_SWING_DIRECTION_OPTIONS = {
