@@ -102,6 +102,7 @@ class tclacClimate : public climate::Climate, public esphome::uart::UARTDevice, 
 		bool beeper_status_;
 		bool display_status_;
 		bool force_mode_status_;
+		uint8_t switch_preset = 0;
 		bool module_display_status_;
 		uint8_t switch_fan_mode = 0;
 		uint8_t switch_swing_mode = 0;
