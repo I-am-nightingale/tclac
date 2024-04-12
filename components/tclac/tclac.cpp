@@ -176,13 +176,11 @@ void tclacClimate::readData() {
 		
 		// Обработка данных о пресете
 		preset = ClimatePreset::CLIMATE_PRESET_NONE;
-		if (dataRX[7] & (1 << 7)) {
-			preset = ClimatePreset::CLIMATE_PRESET_BOOST;
-		} else if (dataRX[7] & (1 << 6)){
+		if (dataRX[7] & (1 << 6)){
 			preset = ClimatePreset::CLIMATE_PRESET_ECO;
 		} else if (dataRX[9] & (1 << 2)){
 			preset = ClimatePreset::CLIMATE_PRESET_COMFORT;
-		} else if ((dataRX[7] & (1 << 7)) && (dataRX[7] & (1 << 7)) && (dataRX[7] & (1 << 7))){
+		} else if ((dataRX[24] & (1 << 0))){
 			preset = ClimatePreset::CLIMATE_PRESET_SLEEP;
 		}
 		
@@ -366,9 +364,6 @@ void tclacClimate::takeControl() {
 			break;
 		case ClimatePreset::CLIMATE_PRESET_ECO:
 			dataTX[7]	+= 0b10000000;
-			break;
-		case ClimatePreset::CLIMATE_PRESET_BOOST:
-			dataTX[8]	+= 0b00100000;
 			break;
 		case ClimatePreset::CLIMATE_PRESET_SLEEP:
 			dataTX[19]	+= 0b00000001;
