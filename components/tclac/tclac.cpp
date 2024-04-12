@@ -183,7 +183,7 @@ void tclacClimate::readData() {
 			preset = ClimatePreset::CLIMATE_PRESET_ECO;
 		} else if (dataRX[9] & (1 << 2)){
 			preset = ClimatePreset::CLIMATE_PRESET_COMFORT;
-		} else if ((dataRX[19] & (1 << 0))){
+		} else if (dataRX[19] & (1 << 0)){
 			preset = ClimatePreset::CLIMATE_PRESET_SLEEP;
 		}
 		
