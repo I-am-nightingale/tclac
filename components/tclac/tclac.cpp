@@ -66,7 +66,8 @@ void tclacClimate::loop()  {
 		dataRX[4] = esphome::uart::UARTDevice::read();
 
 		auto raw = getHex(dataRX, 5);
-		ESP_LOGD("TCL", "first 5 byte : %s ", raw.c_str());
+		
+		//ESP_LOGD("TCL", "first 5 byte : %s ", raw.c_str());
 
 		// Из первых 5 байт нам нужен пятый- он содержит длину сообщения
 		esphome::uart::UARTDevice::read_array(dataRX+5, dataRX[4]+1);
@@ -74,7 +75,9 @@ void tclacClimate::loop()  {
 		byte check = getChecksum(dataRX, sizeof(dataRX));
 
 		raw = getHex(dataRX, sizeof(dataRX));
-		ESP_LOGD("TCL", "RX full : %s ", raw.c_str());
+		
+		//ESP_LOGD("TCL", "RX full : %s ", raw.c_str());
+		
 		// Проверяем контрольную сумму
 		if (check != dataRX[60]) {
 			ESP_LOGD("TCL", "Invalid checksum %x", check);
