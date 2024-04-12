@@ -182,7 +182,7 @@ void tclacClimate::readData() {
 			preset = ClimatePreset::CLIMATE_PRESET_ECO;
 		} else if (dataRX[9] & (1 << 2)){
 			preset = ClimatePreset::CLIMATE_PRESET_COMFORT;
-		} else if (dataRX[7] & (1 << 7)) && (dataRX[7] & (1 << 7)) && (dataRX[7] & (1 << 7)){
+		} else if ((dataRX[7] & (1 << 7)) && (dataRX[7] & (1 << 7)) && (dataRX[7] & (1 << 7))){
 			preset = ClimatePreset::CLIMATE_PRESET_SLEEP;
 		}
 		
@@ -212,7 +212,7 @@ void tclacClimate::control(const ClimateCall &call) {
 	if (call.get_preset().has_value()){
 		switch_preset = call.get_preset().value();
 	} else {
-		switch_preset = preset;
+		switch_preset = preset.value();
 	}
 	
 	// Запрашиваем данные из переключателя режимов вентилятора
