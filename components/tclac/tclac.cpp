@@ -21,7 +21,7 @@ ClimateTraits tclacClimate::traits() {
 	traits.add_supported_mode(climate::CLIMATE_MODE_OFF);		// Выключенный режим кондиционера доступен всегда
 	traits.add_supported_mode(climate::CLIMATE_MODE_AUTO);		// Автоматический режим кондиционера тоже
 	traits.add_supported_fan_mode(climate::CLIMATE_FAN_AUTO);	// Автоматический режим вентилятора доступен всегда
-	traits.add_supported_preset(climate::CLIMATE_PRESET_NONE);	// На всякий случай без предустановок
+	traits.add_supported_preset(ClimatePreset::CLIMATE_PRESET_NONE);	// На всякий случай без предустановок
 	traits.add_supported_swing_mode(climate::CLIMATE_SWING_OFF);// Выключенный режим качания заслонок доступен всегда
 
 //	traits.set_visual_temperature_step(STEP_TEMPERATURE);
@@ -175,15 +175,15 @@ void tclacClimate::readData() {
 		}
 		
 		// Обработка данных о пресете
-		preset = climate::CLIMATE_PRESET_NONE;
+		preset = ClimatePreset::CLIMATE_PRESET_NONE;
 		if (dataRX[7] & (1 << 7)) {
-			preset = ClimatePreset.CLIMATE_PRESET_BOOST;
+			preset = ClimatePreset::CLIMATE_PRESET_BOOST;
 		} else if (dataRX[7] & (1 << 6)){
-			preset = ClimatePreset.CLIMATE_PRESET_ECO;
+			preset = ClimatePreset::CLIMATE_PRESET_ECO;
 		} else if (dataRX[9] & (1 << 2)){
-			preset = ClimatePreset.CLIMATE_PRESET_COMFORT;
+			preset = ClimatePreset::CLIMATE_PRESET_COMFORT;
 		} else if (dataRX[7] & (1 << 7)) && (dataRX[7] & (1 << 7)) && (dataRX[7] & (1 << 7)){
-			preset = ClimatePreset.CLIMATE_PRESET_SLEEP;
+			preset = ClimatePreset::CLIMATE_PRESET_SLEEP;
 		}
 		
 	} else {
@@ -362,18 +362,18 @@ void tclacClimate::takeControl() {
 	
 	// Устанавливаем предустановки кондиционера
 	switch(switch_preset) {
-		case ClimatePreset.CLIMATE_PRESET_NONE:
+		case ClimatePreset::CLIMATE_PRESET_NONE:
 			break;
-		case ClimatePreset.CLIMATE_PRESET_ECO:
+		case ClimatePreset::CLIMATE_PRESET_ECO:
 			dataTX[7]	+= 0b10000000;
 			break;
-		case ClimatePreset.CLIMATE_PRESET_BOOST:
+		case ClimatePreset::CLIMATE_PRESET_BOOST:
 			dataTX[8]	+= 0b00100000;
 			break;
-		case ClimatePreset.CLIMATE_PRESET_SLEEP:
+		case ClimatePreset::CLIMATE_PRESET_SLEEP:
 			dataTX[19]	+= 0b00000001;
 			break;
-		case ClimatePreset.CLIMATE_PRESET_COMFORT:
+		case ClimatePreset::CLIMATE_PRESET_COMFORT:
 			dataTX[8]	+= 0b00001000;
 			break;
 	}
