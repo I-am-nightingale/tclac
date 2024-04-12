@@ -73,7 +73,7 @@ SUPPORTED_CLIMATE_MODES_OPTIONS = {
 }
 
 SUPPORTED_CLIMATE_PRESETS_OPTIONS = {
-    "NONE": ClimatePreset.CLIMATE_PRESET_NONE,
+    "NONE": ClimatePreset.CLIMATE_PRESET_NONE, # Доступен всегда
     "ECO": ClimatePreset.CLIMATE_PRESET_ECO,
     "SLEEP": ClimatePreset.CLIMATE_PRESET_SLEEP,
     "COMFORT": ClimatePreset.CLIMATE_PRESET_COMFORT,
@@ -162,7 +162,8 @@ CONFIG_SCHEMA = cv.All(
         }
     )
     .extend(uart.UART_DEVICE_SCHEMA)
-    .extend(cv.COMPONENT_SCHEMA)
+    .extend(cv.COMPONENT_SCHEMA),
+    validate_visual,
 )
 
 ForceOnAction = tclac_ns.class_("ForceOnAction", automation.Action)
