@@ -175,15 +175,15 @@ void tclacClimate::readData() {
 		}
 		
 		// Обработка данных о пресете
-		preset_mode = climate::CLIMATE_PRESET_NONE;
+		preset = climate::CLIMATE_PRESET_NONE;
 		if (dataRX[7] & (1 << 7)) {
-			preset_mode = ClimatePreset.CLIMATE_PRESET_BOOST;
+			preset = ClimatePreset.CLIMATE_PRESET_BOOST;
 		} else if (dataRX[7] & (1 << 6)){
-			preset_mode = ClimatePreset.CLIMATE_PRESET_ECO;
+			preset = ClimatePreset.CLIMATE_PRESET_ECO;
 		} else if (dataRX[9] & (1 << 2)){
-			preset_mode = ClimatePreset.CLIMATE_PRESET_COMFORT;
+			preset = ClimatePreset.CLIMATE_PRESET_COMFORT;
 		} else if (dataRX[7] & (1 << 7)) && (dataRX[7] & (1 << 7)) && (dataRX[7] & (1 << 7)){
-			preset_mode = ClimatePreset.CLIMATE_PRESET_SLEEP;
+			preset = ClimatePreset.CLIMATE_PRESET_SLEEP;
 		}
 		
 	} else {
@@ -191,7 +191,7 @@ void tclacClimate::readData() {
 		mode = climate::CLIMATE_MODE_OFF;
 		fan_mode = climate::CLIMATE_FAN_OFF;
 		swing_mode = climate::CLIMATE_SWING_OFF;
-		preset_mode = climate::CLIMATE_PRESET_NONE;
+		preset = climate::CLIMATE_PRESET_NONE;
 	}
 	// Публикуем данные
 	this->publish_state();
@@ -210,9 +210,9 @@ void tclacClimate::control(const ClimateCall &call) {
 	
 	// Запрашиваем данные из переключателя предустановок кондиционера
 	if (call.get_preset().has_value()){
-		switch_preset_mode = call.get_preset().value();
+		switch_preset = call.get_preset().value();
 	} else {
-		switch_preset_mode = preset_mode;
+		switch_preset = preset;
 	}
 	
 	// Запрашиваем данные из переключателя режимов вентилятора
@@ -361,7 +361,7 @@ void tclacClimate::takeControl() {
 	}
 	
 	// Устанавливаем предустановки кондиционера
-	switch(switch_preset_mode) {
+	switch(switch_preset) {
 		case ClimatePreset.CLIMATE_PRESET_NONE:
 			break;
 		case ClimatePreset.CLIMATE_PRESET_ECO:
