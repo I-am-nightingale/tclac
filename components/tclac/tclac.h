@@ -30,7 +30,6 @@ namespace tclac {
 #define FAN_SPEED_POS	8
 #define FAN_QUIET_POS	33
 
-
 #define FAN_AUTO		0b10000000	//auto
 #define FAN_QUIET		0x80		//silent
 #define FAN_LOW			0b10010000	//	|
@@ -41,17 +40,12 @@ namespace tclac {
 #define FAN_DIFFUSE		0b10000000	//	POWER [7]
 #define FAN_SPEED_MASK	0b11110000	//FAN SPEED MASK
 
-
 #define SWING_POS			10
 #define SWING_OFF			0b00000000
 #define SWING_HORIZONTAL	0b00100000
 #define SWING_VERTICAL		0b01000000
 #define SWING_BOTH			0b01100000
 #define SWING_MODE_MASK		0b01100000
-
-#define STEP_TEMPERATURE 1
-#define MIN_SET_TEMPERATURE 16
-#define MAX_SET_TEMPERATURE 31
 
 using climate::ClimateCall;
 using climate::ClimateMode;
@@ -122,28 +116,17 @@ class tclacClimate : public climate::Climate, public esphome::uart::UARTDevice, 
 		void loop() override;
 		void setup() override;
 		void update() override;
-		void dataShow(bool flow, bool shine);
-		void sendData(byte * message, byte size);
-		static String getHex(byte *message, byte size);
-		static byte getChecksum(const byte * message, size_t size);
-		void control(const ClimateCall &call) override; // Climate control
-		
-		// Заготовки функций запроса состояния, может пригодиться в будущем, если делать обратную связь. Очень не хочется, будет очень костыльно.
-		
-		//bool get_beeper_state() const;
-		//bool get_display_state() const;
-		//bool tclacClimate::get_module_display_state() const;
-		//AirflowVerticalDirection get_vertical_airflow() const;
-		//AirflowHorizontalDirection get_horizontal_airflow() const;
-		//VerticalSwingDirection tclacClimate::get_vertical_swing_direction() const;
-		//HorizontalSwingDirection tclacClimate::get_horizontal_swing_direction() const;
-
 		void set_beeper_state(bool state);
 		void set_display_state(bool state);
+		void dataShow(bool flow, bool shine);
 		void set_force_mode_state(bool state);
 		void set_rx_led_pin(GPIOPin *rx_led_pin);
 		void set_tx_led_pin(GPIOPin *tx_led_pin);
+		void sendData(byte * message, byte size);
 		void set_module_display_state(bool state);
+		static String getHex(byte *message, byte size);
+		void control(const ClimateCall &call) override;
+		static byte getChecksum(const byte * message, size_t size);
 		void set_vertical_airflow(AirflowVerticalDirection direction);
 		void set_horizontal_airflow(AirflowHorizontalDirection direction);
 		void set_vertical_swing_direction(VerticalSwingDirection direction);
@@ -165,9 +148,7 @@ class tclacClimate : public climate::Climate, public esphome::uart::UARTDevice, 
 		VerticalSwingDirection vertical_swing_direction_;
 		std::set<ClimateSwingMode> supported_swing_modes_{};
 		HorizontalSwingDirection horizontal_swing_direction_;
-		
 };
-
 }
 }
 

@@ -158,7 +158,7 @@ switch:
           id(${device_name}climate).set_display_state(false);
   
   # Светодиодная индикация обмена данными с кондиционером, по умолчанию выключена
-  - name: Module display
+  - name: Display on module
     platform: template
     device_class: switch
     id: ledflash_mode
