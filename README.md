@@ -3,11 +3,14 @@
 невозможно из-за огромного разбега в комплектациях: даже одна и та же модель, буквально буква-в-букву может, например, не иметь
 родного модуля WiFI, не иметь провода с USB разъемом или вовсе на плате управления может не быть впаян разъем UART.
 Однако, в целом, с пайкой или без, проверены следующие кондиционеры:
+- Axioma ASX09H1/ASB09H1
+- Daichi AIR20AVQ1/AIR20FV1
 - TCL TAC-07CHSA/TPG-W
 - TCL TAC-09CHSA/TPG
-- TCL TAC-12CHSA/TPG
 - TCL TAC-09CHSA/DSEI-W
-- Daichi AIR20AVQ1/AIR20FV1
+- TCL TAC-12CHSA/TPG
+
+Компоненту требуется HomeAsistant и ESPHome версии не ниже 2023.3.0 !
 ____
 Пост по проекту находится [в моем канале на Дзене](https://dzen.ru/b/Zhmd3bLEd3GbU8mD)
 
@@ -42,6 +45,12 @@ esp32:
 esphome:
   platform: ESP32
   board: nodemcu-32s
+```
+А это уже пример для wemos D1 Mini nodemcu esp12f:
+```yaml
+esphome:
+  platform: ESP8266
+  board: esp12e
 ```
 В общем- все то же самое, как и обычно, вариант под свою платформу легко ищется в интернете.
 
