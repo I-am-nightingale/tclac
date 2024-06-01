@@ -372,7 +372,7 @@ void tclacClimate::takeControl() {
 			dataTX[19]	+= 0b00000001;
 			break;
 		case ClimatePreset::CLIMATE_PRESET_COMFORT:
-			dataTX[8]	+= 0b00001000;
+			dataTX[8]	+= 0b00010000;
 			break;
 	}
 
