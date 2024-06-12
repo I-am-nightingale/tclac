@@ -5,12 +5,18 @@
 Однако, в целом, с пайкой или без, проверены следующие кондиционеры:
 - Axioma ASX09H1/ASB09H1
 - Daichi AIR20AVQ1/AIR20FV1
+- Daichi DA35EVQ1-1/DF35EV1-1
+- Dantex RK-12SATI/RK-12SATIE
 - TCL TAC-07CHSA/TPG-W
 - TCL TAC-09CHSA/TPG
 - TCL TAC-09CHSA/DSEI-W
 - TCL TAC-12CHSA/TPG
 
 Компоненту требуется HomeAsistant и ESPHome версии не ниже 2023.3.0 !
+____
+Это все для работы ИСКЛЮЧИТЕЛЬНО с HomeAsistant и ESPHome. Если Вас интересует другие варианты или возможность подключить кондиционер
+как-то иначе к каким-то другим системам, то мне есть что предложить:
+[Вариант для подключения через MQTT](https://github.com/pavel211/TCL-TAC-07-WiFi)
 ____
 Пост по проекту находится [в моем канале на Дзене](https://dzen.ru/b/Zhmd3bLEd3GbU8mD)
 
@@ -40,7 +46,7 @@ esp32:
   framework:
     type: arduino
 ```
-Можно подключать платформу и через основной конфиг, вот, предложенный [испытателем альфа-версии](https://github.com/kai-zer-ru), пример для Esp32 WROOM32:
+Можно подключать платформу и через основной конфиг. Вот, предложенный [испытателем альфа-версии](https://github.com/kai-zer-ru), пример для Esp32 WROOM32:
 ```yaml
 esphome:
   platform: ESP32
