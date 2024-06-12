@@ -67,7 +67,7 @@ void tclacClimate::loop()  {
 		delay(5);
 		dataRX[4] = esphome::uart::UARTDevice::read();
 
-		auto raw = getHex(dataRX, 5);
+		//auto raw = getHex(dataRX, 5);
 		
 		//ESP_LOGD("TCL", "first 5 byte : %s ", raw.c_str());
 
@@ -76,7 +76,7 @@ void tclacClimate::loop()  {
 
 		byte check = getChecksum(dataRX, sizeof(dataRX));
 
-		raw = getHex(dataRX, sizeof(dataRX));
+		//raw = getHex(dataRX, sizeof(dataRX));
 		
 		//ESP_LOGD("TCL", "RX full : %s ", raw.c_str());
 		
@@ -97,7 +97,7 @@ void tclacClimate::loop()  {
 void tclacClimate::update() {
 	tclacClimate::dataShow(1,1);
 	this->esphome::uart::UARTDevice::write_array(poll, sizeof(poll));
-	auto raw = tclacClimate::getHex(poll, sizeof(poll));
+	//auto raw = tclacClimate::getHex(poll, sizeof(poll));
 	//ESP_LOGD("TCL", "chek status sended");
 	tclacClimate::dataShow(1,0);
 }
@@ -550,7 +550,7 @@ void tclacClimate::sendData(byte * message, byte size) {
 	tclacClimate::dataShow(1,1);
 	//Serial.write(message, size);
 	this->esphome::uart::UARTDevice::write_array(message, size);
-	auto raw = getHex(message, size);
+	//auto raw = getHex(message, size);
 	ESP_LOGD("TCL", "Message to TCL sended...");
 	tclacClimate::dataShow(1,0);
 }
