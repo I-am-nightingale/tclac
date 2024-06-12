@@ -111,7 +111,7 @@ void tclacClimate::readData() {
 
 	if (dataRX[MODE_POS] & ( 1 << 4)) {
 		// Если кондиционер включен, то разбираем данные для отображения
-		ESP_LOGD("TCL", "AC is on");
+		// ESP_LOGD("TCL", "AC is on");
 		uint8_t modeswitch = MODE_MASK & dataRX[MODE_POS];
 		uint8_t fanspeedswitch = FAN_SPEED_MASK & dataRX[FAN_SPEED_POS];
 		uint8_t swingmodeswitch = SWING_MODE_MASK & dataRX[SWING_POS];
@@ -242,6 +242,7 @@ void tclacClimate::control(const ClimateCall &call) {
 		target_temperature_set = 31-(int)target_temperature;
 	}
 	
+	is_call_control = true;
 	takeControl();
 	allow_take_control = true;
 }
@@ -257,6 +258,14 @@ void tclacClimate::takeControl() {
 	dataTX[19] = 0b00000000;
 	dataTX[32] = 0b00000000;
 	dataTX[33] = 0b00000000;
+	
+	if (is_call_control != true){
+		switch_climate_mode = mode;
+		switch_preset = preset.value();
+		switch_fan_mode = fan_mode.value();
+		switch_swing_mode = swing_mode;
+		target_temperature_set = 31-(int)target_temperature;
+	}
 	
 	// Включаем или отключаем пищалку в зависимости от переключателя в настройках
 	if (beeper_status_){
@@ -546,6 +555,7 @@ void tclacClimate::takeControl() {
 	dataTX[37] = tclacClimate::getChecksum(dataTX, sizeof(dataTX));
 
 	tclacClimate::sendData(dataTX, sizeof(dataTX));
+	allow_take_control = false;
 }
 
 // Отправка данных в кондиционер
