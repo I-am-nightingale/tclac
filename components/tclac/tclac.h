@@ -99,10 +99,12 @@ class tclacClimate : public climate::Climate, public esphome::uart::UARTDevice, 
 		uint8_t switch_preset = 0;
 		bool module_display_status_;
 		uint8_t switch_fan_mode = 0;
+		bool is_call_control = false;
 		uint8_t switch_swing_mode = 0;
 		int target_temperature_set = 0;
 		uint8_t switch_climate_mode = 0;
 		bool allow_take_control = false;
+		
 		esphome::climate::ClimateTraits traits_;
 		
 	public:
