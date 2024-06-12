@@ -111,6 +111,7 @@ void tclacClimate::readData() {
 
 	if (dataRX[MODE_POS] & ( 1 << 4)) {
 		// Если кондиционер включен, то разбираем данные для отображения
+		ESP_LOGD("TCL", "AC is on");
 		uint8_t modeswitch = MODE_MASK & dataRX[MODE_POS];
 		uint8_t fanspeedswitch = FAN_SPEED_MASK & dataRX[FAN_SPEED_POS];
 		uint8_t swingmodeswitch = SWING_MODE_MASK & dataRX[SWING_POS];
@@ -206,8 +207,10 @@ void tclacClimate::control(const ClimateCall &call) {
 	// Запрашиваем данные из переключателя режимов работы кондиционера
 	if (call.get_mode().has_value()){
 		switch_climate_mode = call.get_mode().value();
+		ESP_LOGD("TCL", "Get MODE from call");
 	} else {
 		switch_climate_mode = mode;
+		ESP_LOGD("TCL", "Get MODE from AC");
 	}
 	
 	// Запрашиваем данные из переключателя предустановок кондиционера
