@@ -207,7 +207,7 @@ void tclacClimate::control(const ClimateCall &call) {
 	if (call.get_mode().has_value()){
 		switch_climate_mode = call.get_mode().value();
 	} else {
-		switch_climate_mode = mode;
+		switch_climate_mode = mode.value();
 	}
 	
 	// Запрашиваем данные из переключателя предустановок кондиционера
@@ -229,7 +229,7 @@ void tclacClimate::control(const ClimateCall &call) {
 		switch_swing_mode = call.get_swing_mode().value();
 	} else {
 		// А если в переключателе пусто- заполняем значением из последнего опроса состояния. Типа, ничего не поменялось.
-		switch_swing_mode = swing_mode;
+		switch_swing_mode = swing_mode.value();
 	}
 	
 	// Расчет температуры
