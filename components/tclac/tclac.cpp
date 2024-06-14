@@ -260,6 +260,7 @@ void tclacClimate::takeControl() {
 	dataTX[33] = 0b00000000;
 	
 	if (is_call_control != true){
+		ESP_LOGD("TCL", "Get MODE from AC for force config");
 		switch_climate_mode = mode;
 		switch_preset = preset.value();
 		switch_fan_mode = fan_mode.value();
@@ -556,6 +557,7 @@ void tclacClimate::takeControl() {
 
 	tclacClimate::sendData(dataTX, sizeof(dataTX));
 	allow_take_control = false;
+	is_call_control = false;
 }
 
 // Отправка данных в кондиционер

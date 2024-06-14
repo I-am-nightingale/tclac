@@ -5,6 +5,8 @@
 Однако, в целом, с пайкой или без, проверены следующие кондиционеры:
 - Axioma ASX09H1/ASB09H1
 - Daichi AIR20AVQ1/AIR20FV1
+- Daichi AIR25AVQS1R-1/AIR25FVS1R-1
+- Daichi AIR35AVQS1R-1/AIR35FVS1R-1
 - Daichi DA35EVQ1-1/DF35EV1-1
 - Dantex RK-12SATI/RK-12SATIE
 - TCL TAC-07CHSA/TPG-W
