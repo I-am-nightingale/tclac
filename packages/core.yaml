@@ -78,7 +78,7 @@ esphome:
           id(${device_name}climate).set_horizontal_airflow(esphome::tclac::AirflowHorizontalDirection::RIGHT);
         } else if (id(hfixing).active_index() == 5){
           id(${device_name}climate).set_horizontal_airflow(esphome::tclac::AirflowHorizontalDirection::MAX_RIGHT);
-        
+        }
         if (id(beep_mode).state){
           id(${device_name}climate).set_beeper_state(true);
         } else {
