@@ -6,7 +6,7 @@ sensor:
   - platform: wifi_signal
     id: wifi_strenght
     internal: true
-    update_interval: 1s
+    update_interval: 20s
     filters:
       - lambda: return min(max(2 * (x + 100.0), 0.0), 100.0);
 
@@ -32,7 +32,7 @@ display:
   - platform: ssd1306_i2c
     model: "SSD1306 128x32"
     address: 0x3C
-    rotation: 180
+    rotation: 0
     id: oled_disp
     lambda: |-
       if (id(${device_name}_wifi).is_connected()){
@@ -43,15 +43,15 @@ display:
         if (id(${device_name}climate).mode == CLIMATE_MODE_OFF){
           id(oled_disp).print(0, 14, id(font1), "Выключен");
         } else if (id(${device_name}climate).mode == CLIMATE_MODE_AUTO){
-          id(oled_disp).print(0, 14, id(font1), "Авторежим");
+          id(oled_disp).print(0, 14, id(font1), "Авто");
         } else if (id(${device_name}climate).mode == CLIMATE_MODE_COOL){
-          id(oled_disp).print(0, 14, id(font1), "Охлаждение");
+          id(oled_disp).print(0, 14, id(font1), "Мороз");
         } else if (id(${device_name}climate).mode == CLIMATE_MODE_HEAT){
-          id(oled_disp).print(0, 14, id(font1), "Нагревание");
+          id(oled_disp).print(0, 14, id(font1), "Жара");
         } else if (id(${device_name}climate).mode == CLIMATE_MODE_DRY){
-          id(oled_disp).print(0, 14, id(font1), "Осушение");
+          id(oled_disp).print(0, 14, id(font1), "Пустыня");
         } else if (id(${device_name}climate).mode == CLIMATE_MODE_FAN_ONLY){
-          id(oled_disp).print(0, 14, id(font1), "Вентилятор");
+          id(oled_disp).print(0, 14, id(font1), "Ветер");
         }
         
         if (id(beep_mode).state){
@@ -74,5 +74,5 @@ display:
         }
       }
       else {
-        id(oled_disp).print(0, 0, id(font1), "Ready!");
+        id(oled_disp).print(0, 0, id(font1), "Готов!");
       }

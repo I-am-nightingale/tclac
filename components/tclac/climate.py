@@ -6,9 +6,13 @@ from esphome.const import (
     CONF_ID,
     CONF_LEVEL,
     CONF_BEEPER,
+    CONF_VISUAL,
     CONF_MAX_TEMPERATURE,
     CONF_MIN_TEMPERATURE,
     CONF_SUPPORTED_MODES,
+    CONF_TEMPERATURE_STEP,
+    CONF_SUPPORTED_PRESETS,
+    CONF_TARGET_TEMPERATURE,
     CONF_SUPPORTED_FAN_MODES,
     CONF_SUPPORTED_SWING_MODES,
 )
@@ -17,16 +21,24 @@ from esphome.components.climate import (
     ClimateMode,
     ClimatePreset,
     ClimateSwingMode,
+    CONF_CURRENT_TEMPERATURE,
 )
 
 AUTO_LOAD = ["climate"]
-CODEOWNERS = ["@I-am-nightingale"]
+CODEOWNERS = ["@I-am-nightingale", "@xaxexa", "@junkfix"]
 DEPENDENCIES = ["climate", "uart"]
+
+TCLAC_MIN_TEMPERATURE = 16.0
+TCLAC_MAX_TEMPERATURE = 31.0
+TCLAC_TARGET_TEMPERATURE_STEP = 1.0
+TCLAC_CURRENT_TEMPERATURE_STEP = 1.0
+
 CONF_RX_LED = "rx_led"
 CONF_TX_LED = "tx_led"
 CONF_DISPLAY = "show_display"
-CONF_MODULE_DISPLAY = "show_module_display"
+CONF_FORCE_MODE = "force_mode"
 CONF_VERTICAL_AIRFLOW = "vertical_airflow"
+CONF_MODULE_DISPLAY = "show_module_display"
 CONF_HORIZONTAL_AIRFLOW = "horizontal_airflow"
 CONF_VERTICAL_SWING_MODE = "vertical_swing_mode"
 CONF_HORIZONTAL_SWING_MODE = "horizontal_swing_mode"
@@ -59,6 +71,13 @@ SUPPORTED_CLIMATE_MODES_OPTIONS = {
     "HEAT": ClimateMode.CLIMATE_MODE_HEAT,
     "DRY": ClimateMode.CLIMATE_MODE_DRY,
     "FAN_ONLY": ClimateMode.CLIMATE_MODE_FAN_ONLY,
+}
+
+SUPPORTED_CLIMATE_PRESETS_OPTIONS = {
+    "NONE": ClimatePreset.CLIMATE_PRESET_NONE, # Доступен всегда
+    "ECO": ClimatePreset.CLIMATE_PRESET_ECO,
+    "SLEEP": ClimatePreset.CLIMATE_PRESET_SLEEP,
+    "COMFORT": ClimatePreset.CLIMATE_PRESET_COMFORT,
 }
 
 VerticalSwingDirection = tclac_ns.enum("VerticalSwingDirection", True)
@@ -96,6 +115,33 @@ AIRFLOW_HORIZONTAL_DIRECTION_OPTIONS = {
     "MAX_RIGHT": AirflowHorizontalDirection.MAX_RIGHT,
 }
 
+# Проверка конфигурации интерфейса и принятие значений по умолчанию
+def validate_visual(config):
+    if CONF_VISUAL in config:
+        visual_config = config[CONF_VISUAL]
+        if CONF_MIN_TEMPERATURE in visual_config:
+            min_temp = visual_config[CONF_MIN_TEMPERATURE]
+            if min_temp < TCLAC_MIN_TEMPERATURE:
+                raise cv.Invalid(f"Указанная интерфейсная минимальная температура в {min_temp} ниже допустимой {TCLAC_MIN_TEMPERATURE} для кондиционера")
+        else:
+            config[CONF_VISUAL][CONF_MIN_TEMPERATURE] = TCLAC_MIN_TEMPERATURE
+        if CONF_MAX_TEMPERATURE in visual_config:
+            max_temp = visual_config[CONF_MAX_TEMPERATURE]
+            if max_temp > TCLAC_MAX_TEMPERATURE:
+                raise cv.Invalid(f"Указанная интерфейсная максимальная температура в {max_temp} выше допустимой {TCLAC_MAX_TEMPERATURE} для кондиционера")
+        else:
+            config[CONF_VISUAL][CONF_MAX_TEMPERATURE] = TCLAC_MAX_TEMPERATURE
+        if CONF_TEMPERATURE_STEP in visual_config:
+            temp_step = config[CONF_VISUAL][CONF_TEMPERATURE_STEP][CONF_TARGET_TEMPERATURE]
+            if ((int)(temp_step * 2)) / 2 != temp_step:
+                raise cv.Invalid(f"Указанный шаг температуры {temp_step} не корректен, должен быть кратен 1")
+        else:
+            config[CONF_VISUAL][CONF_TEMPERATURE_STEP] = {CONF_TARGET_TEMPERATURE: TCLAC_TARGET_TEMPERATURE_STEP,CONF_CURRENT_TEMPERATURE: TCLAC_CURRENT_TEMPERATURE_STEP,}
+    else:
+        config[CONF_VISUAL] = {CONF_MIN_TEMPERATURE: TCLAC_MIN_TEMPERATURE,CONF_MAX_TEMPERATURE: TCLAC_MAX_TEMPERATURE,CONF_TEMPERATURE_STEP: {CONF_TARGET_TEMPERATURE: TCLAC_TARGET_TEMPERATURE_STEP,CONF_CURRENT_TEMPERATURE: TCLAC_CURRENT_TEMPERATURE_STEP,},}
+    return config
+
+# Проверка конфигурации компонента и принятие значений по умолчанию
 CONFIG_SCHEMA = cv.All(
     climate.CLIMATE_SCHEMA.extend(
         {
@@ -104,24 +150,32 @@ CONFIG_SCHEMA = cv.All(
             cv.Optional(CONF_DISPLAY, default=True): cv.boolean,
             cv.Optional(CONF_RX_LED): pins.gpio_output_pin_schema,
             cv.Optional(CONF_TX_LED): pins.gpio_output_pin_schema,
+            cv.Optional(CONF_FORCE_MODE, default=True): cv.boolean,
             cv.Optional(CONF_MODULE_DISPLAY, default=True): cv.boolean,
+            cv.Optional(CONF_VERTICAL_AIRFLOW, default="CENTER"): cv.ensure_list(cv.enum(AIRFLOW_VERTICAL_DIRECTION_OPTIONS, upper=True)),
+            cv.Optional(CONF_VERTICAL_SWING_MODE, default="UP_DOWN"): cv.ensure_list(cv.enum(VERTICAL_SWING_DIRECTION_OPTIONS, upper=True)),
+            cv.Optional(CONF_HORIZONTAL_AIRFLOW, default="CENTER"): cv.ensure_list(cv.enum(AIRFLOW_HORIZONTAL_DIRECTION_OPTIONS, upper=True)),
+            cv.Optional(CONF_HORIZONTAL_SWING_MODE, default="LEFT_RIGHT"): cv.ensure_list(cv.enum(HORIZONTAL_SWING_DIRECTION_OPTIONS, upper=True)),
+            cv.Optional(CONF_SUPPORTED_PRESETS,default=["NONE","ECO","SLEEP","COMFORT",],): cv.ensure_list(cv.enum(SUPPORTED_CLIMATE_PRESETS_OPTIONS, upper=True)),
             cv.Optional(CONF_SUPPORTED_SWING_MODES,default=["OFF","VERTICAL","HORIZONTAL","BOTH",],): cv.ensure_list(cv.enum(SUPPORTED_SWING_MODES_OPTIONS, upper=True)),
             cv.Optional(CONF_SUPPORTED_MODES,default=["OFF","AUTO","COOL","HEAT","DRY","FAN_ONLY",],): cv.ensure_list(cv.enum(SUPPORTED_CLIMATE_MODES_OPTIONS, upper=True)),
             cv.Optional(CONF_SUPPORTED_FAN_MODES,default=["AUTO","QUIET","LOW","MIDDLE","MEDIUM","HIGH","FOCUS","DIFFUSE",],): cv.ensure_list(cv.enum(SUPPORTED_FAN_MODES_OPTIONS, upper=True)),
         }
     )
     .extend(uart.UART_DEVICE_SCHEMA)
-    .extend(cv.COMPONENT_SCHEMA)
+    .extend(cv.COMPONENT_SCHEMA),
+    validate_visual,
 )
 
-
+ForceOnAction = tclac_ns.class_("ForceOnAction", automation.Action)
+ForceOffAction = tclac_ns.class_("ForceOffAction", automation.Action)
 BeeperOnAction = tclac_ns.class_("BeeperOnAction", automation.Action)
 BeeperOffAction = tclac_ns.class_("BeeperOffAction", automation.Action)
 DisplayOnAction = tclac_ns.class_("DisplayOnAction", automation.Action)
 DisplayOffAction = tclac_ns.class_("DisplayOffAction", automation.Action)
 ModuleDisplayOnAction = tclac_ns.class_("ModuleDisplayOnAction", automation.Action)
-ModuleDisplayOffAction = tclac_ns.class_("ModuleDisplayOffAction", automation.Action)
 VerticalAirflowAction = tclac_ns.class_("VerticalAirflowAction", automation.Action)
+ModuleDisplayOffAction = tclac_ns.class_("ModuleDisplayOffAction", automation.Action)
 HorizontalAirflowAction = tclac_ns.class_("HorizontalAirflowAction", automation.Action)
 VerticalSwingDirectionAction = tclac_ns.class_("VerticalSwingDirectionAction", automation.Action)
 HorizontalSwingDirectionAction = tclac_ns.class_("HorizontalSwingDirectionAction", automation.Action)
@@ -160,6 +214,18 @@ async def beeper_action_to_code(config, action_id, template_arg, args):
     "climate.tclac.module_display_off", ModuleDisplayOffAction, cv.Schema
 )
 async def module_display_action_to_code(config, action_id, template_arg, args):
+    paren = await cg.get_variable(config[CONF_ID])
+    var = cg.new_Pvariable(action_id, template_arg, paren)
+    return var
+    
+# Регистрация событий включения и отключения принудительного применения настроек
+@automation.register_action(
+    "climate.tclac.force_mode_on", ForceOnAction, cv.Schema
+)
+@automation.register_action(
+    "climate.tclac.force_mode_off", ForceOffAction, cv.Schema
+)
+async def force_mode_action_to_code(config, action_id, template_arg, args):
     paren = await cg.get_variable(config[CONF_ID])
     var = cg.new_Pvariable(action_id, template_arg, paren)
     return var
@@ -253,8 +319,12 @@ def to_code(config):
         cg.add(var.set_beeper_state(config[CONF_BEEPER]))
     if CONF_DISPLAY in config:
         cg.add(var.set_display_state(config[CONF_DISPLAY]))
+    if CONF_FORCE_MODE in config:
+        cg.add(var.set_force_mode_state(config[CONF_FORCE_MODE]))
     if CONF_SUPPORTED_MODES in config:
         cg.add(var.set_supported_modes(config[CONF_SUPPORTED_MODES]))
+    if CONF_SUPPORTED_PRESETS in config:
+        cg.add(var.set_supported_presets(config[CONF_SUPPORTED_PRESETS]))
     if CONF_MODULE_DISPLAY in config:
         cg.add(var.set_module_display_state(config[CONF_MODULE_DISPLAY]))
     if CONF_SUPPORTED_FAN_MODES in config:

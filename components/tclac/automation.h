@@ -110,5 +110,25 @@ template<typename... Ts> class ModuleDisplayOffAction : public Action<Ts...> {
   tclacClimate *parent_;
 };
 
+// Шаблон действия: включение принудительного применения настроек
+template<typename... Ts> class ForceOnAction : public Action<Ts...> {
+ public:
+  ForceOnAction(tclacClimate *parent) : parent_(parent) {}
+  void play(Ts... x) { this->parent_->set_force_mode_state(true); }
+
+ protected:
+  tclacClimate *parent_;
+};
+
+// Шаблон действия: выключение принудительного применения настроек
+template<typename... Ts> class ForceOffAction : public Action<Ts...> {
+ public:
+  ForceOffAction(tclacClimate *parent) : parent_(parent) {}
+  void play(Ts... x) { this->parent_->set_force_mode_state(false); }
+
+ protected:
+  tclacClimate *parent_;
+};
+
 }  // namespace tclac
 }  // namespace esphome
