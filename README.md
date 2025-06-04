@@ -13,6 +13,7 @@
 - TCL TAC-09CHSA/TPG
 - TCL TAC-09CHSA/DSEI-W
 - TCL TAC-12CHSA/TPG
+- TCL TAC-TP18INV/R
 
 Компоненту требуется HomeAsistant и ESPHome версии не ниже 2023.3.0 !
 ____
