@@ -19,6 +19,9 @@ packages:
       - packages/core.yaml
     refresh: 30s
     
+    
 esphome:
-  platform: ESP32
+  name: tclac1
+  
+esp32:
   board: nodemcu-32s
