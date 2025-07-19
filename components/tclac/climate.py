@@ -142,10 +142,13 @@ def validate_visual(config):
     return config
 
 # Проверка конфигурации компонента и принятие значений по умолчанию
-CONFIG_SCHEMA = cv.All(
-    climate.CLIMATE_SCHEMA.extend(
+# Fix for EspHOME 2025.11.0
+CONFIG_SCHEMA = (
+    climate.climate_schema(tclacClimate)
+    .extend(uart.UART_DEVICE_SCHEMA)
+    .extend(cv.COMPONENT_SCHEMA)
+    .extend(
         {
-            cv.GenerateID(): cv.declare_id(tclacClimate),
             cv.Optional(CONF_BEEPER, default=True): cv.boolean,
             cv.Optional(CONF_DISPLAY, default=True): cv.boolean,
             cv.Optional(CONF_RX_LED): pins.gpio_output_pin_schema,
@@ -156,15 +159,13 @@ CONFIG_SCHEMA = cv.All(
             cv.Optional(CONF_VERTICAL_SWING_MODE, default="UP_DOWN"): cv.ensure_list(cv.enum(VERTICAL_SWING_DIRECTION_OPTIONS, upper=True)),
             cv.Optional(CONF_HORIZONTAL_AIRFLOW, default="CENTER"): cv.ensure_list(cv.enum(AIRFLOW_HORIZONTAL_DIRECTION_OPTIONS, upper=True)),
             cv.Optional(CONF_HORIZONTAL_SWING_MODE, default="LEFT_RIGHT"): cv.ensure_list(cv.enum(HORIZONTAL_SWING_DIRECTION_OPTIONS, upper=True)),
-            cv.Optional(CONF_SUPPORTED_PRESETS,default=["NONE","ECO","SLEEP","COMFORT",],): cv.ensure_list(cv.enum(SUPPORTED_CLIMATE_PRESETS_OPTIONS, upper=True)),
-            cv.Optional(CONF_SUPPORTED_SWING_MODES,default=["OFF","VERTICAL","HORIZONTAL","BOTH",],): cv.ensure_list(cv.enum(SUPPORTED_SWING_MODES_OPTIONS, upper=True)),
-            cv.Optional(CONF_SUPPORTED_MODES,default=["OFF","AUTO","COOL","HEAT","DRY","FAN_ONLY",],): cv.ensure_list(cv.enum(SUPPORTED_CLIMATE_MODES_OPTIONS, upper=True)),
-            cv.Optional(CONF_SUPPORTED_FAN_MODES,default=["AUTO","QUIET","LOW","MIDDLE","MEDIUM","HIGH","FOCUS","DIFFUSE",],): cv.ensure_list(cv.enum(SUPPORTED_FAN_MODES_OPTIONS, upper=True)),
+            cv.Optional(CONF_SUPPORTED_PRESETS, default=["NONE", "ECO", "SLEEP", "COMFORT"]): cv.ensure_list(cv.enum(SUPPORTED_CLIMATE_PRESETS_OPTIONS, upper=True)),
+            cv.Optional(CONF_SUPPORTED_SWING_MODES, default=["OFF", "VERTICAL", "HORIZONTAL", "BOTH"]): cv.ensure_list(cv.enum(SUPPORTED_SWING_MODES_OPTIONS, upper=True)),
+            cv.Optional(CONF_SUPPORTED_MODES, default=["OFF", "AUTO", "COOL", "HEAT", "DRY", "FAN_ONLY"]): cv.ensure_list(cv.enum(SUPPORTED_CLIMATE_MODES_OPTIONS, upper=True)),
+            cv.Optional(CONF_SUPPORTED_FAN_MODES, default=["AUTO", "QUIET", "LOW", "MIDDLE", "MEDIUM", "HIGH", "FOCUS", "DIFFUSE"]): cv.ensure_list(cv.enum(SUPPORTED_FAN_MODES_OPTIONS, upper=True)),
         }
     )
-    .extend(uart.UART_DEVICE_SCHEMA)
-    .extend(cv.COMPONENT_SCHEMA),
-    validate_visual,
+    .add_extra(validate_visual)
 )
 
 ForceOnAction = tclac_ns.class_("ForceOnAction", automation.Action)
