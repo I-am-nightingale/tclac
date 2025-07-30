@@ -4,15 +4,28 @@
 родного модуля WiFI, не иметь провода с USB разъемом или вовсе на плате управления может не быть впаян разъем UART.
 Однако, в целом, с пайкой или без, проверены следующие кондиционеры:
 - Axioma ASX09H1/ASB09H1
+- Ballu Discovery DC BSVI-07HN8
+- Ballu Discovery DC BSVI-09HN8
+- Ballu Discovery DC BSVI-12HN8
 - Daichi AIR20AVQ1/AIR20FV1
 - Daichi AIR25AVQS1R-1/AIR25FVS1R-1
 - Daichi AIR35AVQS1R-1/AIR35FVS1R-1
 - Daichi DA35EVQ1-1/DF35EV1-1
 - Dantex RK-12SATI/RK-12SATIE
+- Ecostar Radium KVS-RAD09CH
+- Royal Clima Gloria Inverter
+- TCL ELI ONF 12
+- TCL Liferise ONF 09
+- TCL TAC-CT09INV/R
+- TCL One Inverter TACM-09HRID/E1 (возможно, иной порядок контактов)
 - TCL TAC-07CHSA/TPG-W
 - TCL TAC-09CHSA/TPG
 - TCL TAC-09CHSA/DSEI-W
+- TCL TAC-09HRID/E1
 - TCL TAC-12CHSA/TPG
+- TCL TAC-12CHSA/TPGI
+- TCL TAC-XAL24I
+- TCL TPG31IHB
 
 Компоненту требуется HomeAsistant и ESPHome версии не ниже 2023.3.0 !
 ____
