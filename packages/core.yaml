@@ -102,9 +102,9 @@ api:
   encryption:
     key: "${api_key}"
 
-ota:
-- platform: esphome
-  password: "${ota_pass}"
+# ota:
+  # platform: esphome
+  # password: "${ota_pass}"
 
 wifi:
   id: "${device_name}_wifi"
