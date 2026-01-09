@@ -7,6 +7,7 @@
 #include "esphome.h"
 #include "esphome/core/defines.h"
 #include "tclac.h"
+#include <string>
 
 namespace esphome{
 namespace tclac{
@@ -77,7 +78,7 @@ void tclacClimate::loop()  {
 		// Из первых 5 байт нам нужен пятый- он содержит длину сообщения
 		esphome::uart::UARTDevice::read_array(dataRX+5, dataRX[4]+1);
 
-		byte check = getChecksum(dataRX, sizeof(dataRX));
+		uint8_t check = getChecksum(dataRX, sizeof(dataRX));
 
 		//raw = getHex(dataRX, sizeof(dataRX));
 		
@@ -564,7 +565,7 @@ void tclacClimate::takeControl() {
 }
 
 // Отправка данных в кондиционер
-void tclacClimate::sendData(byte * message, byte size) {
+void tclacClimate::sendData(uint8_t * message, uint8_t size) {
 	tclacClimate::dataShow(1,1);
 	//Serial.write(message, size);
 	this->esphome::uart::UARTDevice::write_array(message, size);
@@ -574,19 +575,19 @@ void tclacClimate::sendData(byte * message, byte size) {
 }
 
 // Преобразование байта в читабельный формат
-String tclacClimate::getHex(byte *message, byte size) {
-	String raw;
+std::string tclacClimate::getHex(uint8_t *message, uint8_t size) {
+	std::string raw;
 	for (int i = 0; i < size; i++) {
-		raw += "\n" + String(message[i]);
+		raw += "\n" + std::to_string(message[i]);
 	}
-	raw.toUpperCase();
+	// Note: std::string doesn't have toUpperCase() method, so we'll skip that
 	return raw;
 }
 
 // Вычисление контрольной суммы
-byte tclacClimate::getChecksum(const byte * message, size_t size) {
-	byte position = size - 1;
-	byte crc = 0;
+uint8_t tclacClimate::getChecksum(const uint8_t * message, size_t size) {
+	uint8_t position = size - 1;
+	uint8_t crc = 0;
 	for (int i = 0; i < position; i++)
 		crc ^= message[i];
 	return crc;
