@@ -22,7 +22,7 @@ esphome:
       lambda: !lambda |-
         id(${device_name}climate).set_beeper_state(false);
         id(${device_name}climate).set_force_mode_state(false);
-        
+
         if (id(display_mode).state){
           id(${device_name}climate).set_display_state(true);
         } else {
@@ -33,7 +33,7 @@ esphome:
         } else {
           id(${device_name}climate).set_module_display_state(false);
         }
-        
+
         if (id(vswing).active_index() == 0){
           id(${device_name}climate).set_vertical_swing_direction(esphome::tclac::VerticalSwingDirection::UP_DOWN);
         } else if (id(vswing).active_index() == 1){
@@ -51,7 +51,7 @@ esphome:
         } else if (id(hswing).active_index() == 3){
           id(${device_name}climate).set_horizontal_swing_direction(esphome::tclac::HorizontalSwingDirection::RIGHTSIDE);
         }
-        
+
         if (id(vfixing).active_index() == 0){
           id(${device_name}climate).set_vertical_airflow(esphome::tclac::AirflowVerticalDirection::LAST);
         } else if (id(vfixing).active_index() == 1){
@@ -65,7 +65,7 @@ esphome:
         } else if (id(vfixing).active_index() == 5){
           id(${device_name}climate).set_vertical_airflow(esphome::tclac::AirflowVerticalDirection::MAX_DOWN);
         }
-        
+
         if (id(hfixing).active_index() == 0){
           id(${device_name}climate).set_horizontal_airflow(esphome::tclac::AirflowHorizontalDirection::LAST);
         } else if (id(hfixing).active_index() == 1){
@@ -144,7 +144,7 @@ switch:
       then:
         lambda: !lambda |-
           id(${device_name}climate).set_beeper_state(false);
-  
+
   # Индикатор уставки температуры на корпусе внутреннего блока, по умолчанию включен
   - name: Display
     platform: template
@@ -161,7 +161,7 @@ switch:
       then:
         lambda: !lambda |-
           id(${device_name}climate).set_display_state(false);
-  
+
   # Светодиодная индикация обмена данными с кондиционером, по умолчанию выключена
   - name: Display on module
     platform: template
@@ -178,7 +178,7 @@ switch:
       then:
         lambda: !lambda |-
           id(${device_name}climate).set_module_display_state(false);
-          
+
   - name: Force config
     platform: template
     device_class: switch

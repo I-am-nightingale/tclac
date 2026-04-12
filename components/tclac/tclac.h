@@ -87,9 +87,9 @@ class tclacClimate : public climate::Climate, public esphome::uart::UARTDevice, 
 	private:
 		byte checksum;
 		// dataTX с управлением состоит из 38 байт
-		byte dataTX[38];
+		uint8_t dataTX[38];
 		// А dataRX по прежнему из 61 байта
-		byte dataRX[61];
+		uint8_t dataRX[61];
 		// Команда запроса состояния
 		byte poll[8] = {0xBB,0x00,0x01,0x04,0x02,0x01,0x00,0xBD};
 		// Инициализация и начальное наполнение переменных состоянй переключателей
@@ -104,9 +104,9 @@ class tclacClimate : public climate::Climate, public esphome::uart::UARTDevice, 
 		int target_temperature_set = 0;
 		uint8_t switch_climate_mode = 0;
 		bool allow_take_control = false;
-		
+
 		esphome::climate::ClimateTraits traits_;
-		
+
 	public:
 
 		tclacClimate() : PollingComponent(5 * 1000) {
@@ -137,7 +137,7 @@ class tclacClimate : public climate::Climate, public esphome::uart::UARTDevice, 
 		void set_supported_modes(climate::ClimateModeMask modes);
 		void set_supported_fan_modes(climate::ClimateFanModeMask modes);
 		void set_supported_swing_modes(climate::ClimateSwingModeMask modes);
-		
+
 	protected:
 		GPIOPin *rx_led_pin_;
 		GPIOPin *tx_led_pin_;

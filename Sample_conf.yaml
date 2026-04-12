@@ -18,7 +18,7 @@ packages:
     files:
       - packages/core.yaml
     refresh: 30s
-    
+
 esphome:
   platform: ESP32
   board: nodemcu-32s

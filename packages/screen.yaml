@@ -1,7 +1,7 @@
 time:
   - platform: homeassistant
     id: my_time
-        
+
 sensor:
   - platform: wifi_signal
     id: wifi_strenght
@@ -16,7 +16,7 @@ font:
     size: 16
     bpp: 1
     glyphs: '!"%()+=,-_.:°/?0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ abcdefghijklmnopqrstuvwxyzАБВГДЕЖЗИКЛМНОПРСТУФХЦЧШЩЪЬЭЮЯЫабвгдежзиклмнопрстуфхцчшщъыьэюя'
-    
+
   - file: "gfonts://Press Start 2P"
     id: font2
     size: 8
@@ -39,7 +39,7 @@ display:
         auto time = id(my_time).now();
         id(oled_disp).strftime(0, 0, id(font2), "%H:%M", time);
         id(oled_disp).line(0, 11, 127, 11);
-        
+
         if (id(${device_name}climate).mode == CLIMATE_MODE_OFF){
           id(oled_disp).print(0, 14, id(font1), "Выключен");
         } else if (id(${device_name}climate).mode == CLIMATE_MODE_AUTO){
@@ -53,7 +53,7 @@ display:
         } else if (id(${device_name}climate).mode == CLIMATE_MODE_FAN_ONLY){
           id(oled_disp).print(0, 14, id(font1), "Ветер");
         }
-        
+
         if (id(beep_mode).state){
           id(oled_disp).print(60, 0, id(font2), "П");
         }
