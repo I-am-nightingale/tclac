@@ -87,9 +87,9 @@ class tclacClimate : public climate::Climate, public esphome::uart::UARTDevice, 
 	private:
 		byte checksum;
 		// dataTX с управлением состоит из 38 байт
-		byte dataTX[38];
+		uint8_t dataTX[38];
 		// А dataRX по прежнему из 61 байта
-		byte dataRX[61];
+		uint8_t dataRX[61];
 		// Команда запроса состояния
 		byte poll[8] = {0xBB,0x00,0x01,0x04,0x02,0x01,0x00,0xBD};
 		// Инициализация и начальное наполнение переменных состоянй переключателей

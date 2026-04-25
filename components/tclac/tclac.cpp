@@ -15,11 +15,6 @@ namespace tclac{
 ClimateTraits tclacClimate::traits() {
 	auto traits = climate::ClimateTraits();
 
-	
-	//traits.set_supports_action(false);
-	//traits.set_supports_current_temperature(true);
-	//traits.set_supports_two_point_target_temperature(false);
-
 	traits.add_feature_flags(climate::CLIMATE_SUPPORTS_CURRENT_TEMPERATURE); // Предудущие методы запрещены, теперь нужно использовать add_feature_flags
 
 	traits.set_supported_modes(this->supported_modes_);
@@ -61,13 +56,14 @@ void tclacClimate::loop()  {
 			return;
 		}
 		// А вот если совпал заголовок (0xBB), то начинаем чтение по цепочке еще 4 байт
-		delay(5);
+		// Иногда, для некоторых кондиционеров все же нужно добавить delay(5) между пакетами. Зачем- ХЗ, но так надо. Но не всегда. Хотя иногда- да. Но не каждый раз. Изредка. Случается.
+		// delay(5);
 		dataRX[1] = esphome::uart::UARTDevice::read();
-		delay(5);
+		// delay(5);
 		dataRX[2] = esphome::uart::UARTDevice::read();
-		delay(5);
+		// delay(5);
 		dataRX[3] = esphome::uart::UARTDevice::read();
-		delay(5);
+		// delay(5);
 		dataRX[4] = esphome::uart::UARTDevice::read();
 
 		//auto raw = getHex(dataRX, 5);
@@ -86,14 +82,14 @@ void tclacClimate::loop()  {
 		// Проверяем контрольную сумму
 		if (check != dataRX[60]) {
 			ESP_LOGD("TCL", "Invalid checksum %x", check);
-			tclacClimate::dataShow(0,0);
+			this->dataShow(0,0);
 			return;
 		} else {
 			//ESP_LOGD("TCL", "checksum OK %x", check);
 		}
-		tclacClimate::dataShow(0,0);
+		this->dataShow(0,0);
 		// Прочитав все из буфера приступаем к разбору данных
-		tclacClimate::readData();
+		this->readData();
 	}
 }
 
