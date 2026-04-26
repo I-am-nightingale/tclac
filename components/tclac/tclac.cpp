@@ -14,6 +14,7 @@ namespace tclac{
 
 ClimateTraits tclacClimate::traits() {
 	auto traits = climate::ClimateTraits();
+	traits.add_feature_flags(climate::CLIMATE_SUPPORTS_CURRENT_TEMPERATURE);
 	
 	// Ответственно заявляю, что это все я взял у christoph5180
 	if (this->supported_modes_.empty()) {
@@ -87,7 +88,7 @@ void tclacClimate::loop()  {
 		// Из первых 5 байт нам нужен пятый- он содержит длину сообщения
 		esphome::uart::UARTDevice::read_array(dataRX+5, dataRX[4]+1);
 
-		byte check = getChecksum(dataRX, sizeof(dataRX));
+		uint8_t check = getChecksum(dataRX, sizeof(dataRX));
 
 		//raw = getHex(dataRX, sizeof(dataRX));
 		
@@ -579,7 +580,7 @@ void tclacClimate::takeControl() {
 }
 
 // Отправка данных в кондиционер
-void tclacClimate::sendData(byte * message, byte size) {
+void tclacClimate::sendData(uint8_t * message, uint8_t size) {
 	tclacClimate::dataShow(1,1);
 	//Serial.write(message, size);
 	this->esphome::uart::UARTDevice::write_array(message, size);
@@ -589,7 +590,7 @@ void tclacClimate::sendData(byte * message, byte size) {
 }
 
 // Преобразование байта в читабельный формат
-String tclacClimate::getHex(byte *message, byte size) {
+String tclacClimate::getHex(uint8_t *message, uint8_t size) {
 	String raw;
 	for (int i = 0; i < size; i++) {
 		raw += "\n" + String(message[i]);
@@ -599,9 +600,9 @@ String tclacClimate::getHex(byte *message, byte size) {
 }
 
 // Вычисление контрольной суммы
-byte tclacClimate::getChecksum(const byte * message, size_t size) {
-	byte position = size - 1;
-	byte crc = 0;
+uint8_t tclacClimate::getChecksum(const uint8_t * message, size_t size) {
+	uint8_t position = size - 1;
+	uint8_t crc = 0;
 	for (int i = 0; i < position; i++)
 		crc ^= message[i];
 	return crc;
@@ -647,8 +648,8 @@ void tclacClimate::set_beeper_state(bool state) {
 	}
 }
 // Получение состояния дисплея кондиционера
-void tclacClimate::set_display_state(bool state) {
-	this->display_status_ = state;
+void tclacClimate::set_display_state(bool disp_state) {
+	this->display_status_ = disp_state;
 	if (force_mode_status_){
 		if (allow_take_control){
 			tclacClimate::takeControl();
@@ -656,8 +657,8 @@ void tclacClimate::set_display_state(bool state) {
 	}
 }
 // Получение состояния режима принудительного применения настроек
-void tclacClimate::set_force_mode_state(bool state) {
-	this->force_mode_status_ = state;
+void tclacClimate::set_force_mode_state(bool f_state) {
+	this->force_mode_status_ = f_state;
 }
 // Получение пина светодиода приема данных
 #ifdef CONF_RX_LED
@@ -672,12 +673,12 @@ void tclacClimate::set_tx_led_pin(GPIOPin *tx_led_pin) {
 }
 #endif
 // Получение состояния светодиодов связи модуля
-void tclacClimate::set_module_display_state(bool state) {
-	this->module_display_status_ = state;
+void tclacClimate::set_module_display_state(bool d_state) {
+	this->module_display_status_ = d_state;
 }
 // Получение режима фиксации вертикальной заслонки
-void tclacClimate::set_vertical_airflow(AirflowVerticalDirection direction) {
-	this->vertical_direction_ = direction;
+void tclacClimate::set_vertical_airflow(AirflowVerticalDirection v_airflow) {
+	this->vertical_direction_ = v_airflow;
 	if (force_mode_status_){
 		if (allow_take_control){
 			tclacClimate::takeControl();
@@ -685,8 +686,8 @@ void tclacClimate::set_vertical_airflow(AirflowVerticalDirection direction) {
 	}
 }
 // Получение режима фиксации горизонтальных заслонок
-void tclacClimate::set_horizontal_airflow(AirflowHorizontalDirection direction) {
-	this->horizontal_direction_ = direction;
+void tclacClimate::set_horizontal_airflow(AirflowHorizontalDirection h_airflow) {
+	this->horizontal_direction_ = h_airflow;
 	if (force_mode_status_){
 		if (allow_take_control){
 			tclacClimate::takeControl();
@@ -694,8 +695,8 @@ void tclacClimate::set_horizontal_airflow(AirflowHorizontalDirection direction) 
 	}
 }
 // Получение режима качания вертикальной заслонки
-void tclacClimate::set_vertical_swing_direction(VerticalSwingDirection direction) {
-	this->vertical_swing_direction_ = direction;
+void tclacClimate::set_vertical_swing_direction(VerticalSwingDirection vs_direction) {
+	this->vertical_swing_direction_ = vs_direction;
 	if (force_mode_status_){
 		if (allow_take_control){
 			tclacClimate::takeControl();
@@ -708,8 +709,8 @@ void tclacClimate::set_supported_modes(climate::ClimateModeMask modes) {
 	ESP_LOGD("TCL", "Set up Modes");
 }
 // Получение режима качания горизонтальных заслонок
-void tclacClimate::set_horizontal_swing_direction(HorizontalSwingDirection direction) {
-	horizontal_swing_direction_ = direction;
+void tclacClimate::set_horizontal_swing_direction(HorizontalSwingDirection hs_direction) {
+	horizontal_swing_direction_ = hs_direction;
 	if (force_mode_status_){
 		if (allow_take_control){
 			tclacClimate::takeControl();
@@ -717,12 +718,12 @@ void tclacClimate::set_horizontal_swing_direction(HorizontalSwingDirection direc
 	}
 }
 // Получение доступных скоростей вентилятора
-void tclacClimate::set_supported_fan_modes(climate::ClimateFanModeMask modes){
-	this->supported_fan_modes_ = modes;
+void tclacClimate::set_supported_fan_modes(climate::ClimateFanModeMask fan_modes){
+	this->supported_fan_modes_ = fan_modes;
 }
 // Получение доступных режимов качания заслонок
-void tclacClimate::set_supported_swing_modes(climate::ClimateSwingModeMask modes) {
-	this->supported_swing_modes_ = modes;
+void tclacClimate::set_supported_swing_modes(climate::ClimateSwingModeMask swing_modes) {
+	this->supported_swing_modes_ = swing_modes;
 }
 // Получение доступных предустановок
 void tclacClimate::set_supported_presets(climate::ClimatePresetMask presets) {
