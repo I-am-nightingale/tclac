@@ -209,46 +209,46 @@ void tclacClimate::control(const climate::ClimateCall &call) {
 	
 	// Запрашиваем данные из переключателя режимов работы кондиционера
 	if (call.get_mode().has_value()){
-		switch_climate_mode = call.get_mode().value();
+		this->switch_climate_mode = *call.get_mode();
 		ESP_LOGD("TCL", "Get MODE from call");
 	} else {
-		switch_climate_mode = mode;
+		this->switch_climate_mode = mode;
 		ESP_LOGD("TCL", "Get MODE from AC");
 	}
 	
 	// Запрашиваем данные из переключателя предустановок кондиционера
 	if (call.get_preset().has_value()){
-		switch_preset = call.get_preset().value();
+		this->switch_preset = *call.get_preset();
 	} else {
-		switch_preset = preset.value();
+		this->switch_preset = preset.value();
 	}
 	
 	// Запрашиваем данные из переключателя режимов вентилятора
 	if (call.get_fan_mode().has_value()){
-		switch_fan_mode = call.get_fan_mode().value();
+		this->switch_fan_mode = *call.get_fan_mode();
 	} else {
-		switch_fan_mode = fan_mode.value();
+		this->switch_fan_mode = fan_mode.value();
 	}
 	
 	// Запрашиваем данные из переключателя режимов качания заслонок
 	if (call.get_swing_mode().has_value()){
-		switch_swing_mode = call.get_swing_mode().value();
+		this->switch_swing_mode = *call.get_swing_mode();
 	} else {
 		// А если в переключателе пусто- заполняем значением из последнего опроса состояния. Типа, ничего не поменялось.
-		switch_swing_mode = swing_mode;
+		this->switch_swing_mode = swing_mode;
 	}
 	
 	// Расчет температуры
 	if (call.get_target_temperature().has_value()) {
-		target_temperature_set = 31-(int)call.get_target_temperature().value();
+		this->target_temperature_set = 31-(int)call.get_target_temperature().value();
 	} else {
-		target_temperature_set = 31-(int)target_temperature;
+		this->target_temperature_set = 31-(int)target_temperature;
 	}
 	
-	is_call_control = true;
+	this->is_call_control = true;
 	takeControl();
 	this->publish_state();
-	allow_take_control = true;
+	this->allow_take_control = true;
 }
 	
 	
