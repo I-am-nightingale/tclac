@@ -207,10 +207,10 @@ void tclacClimate::readData() {
 	} else {
 		ESP_LOGD("TCL", "AC is OFF");
 		// Если кондиционер выключен, то все режимы показываются, как выключенные
-		mode = climate::CLIMATE_MODE_OFF;
+		this->mode = climate::CLIMATE_MODE_OFF;
 		//fan_mode = climate::CLIMATE_FAN_OFF;
-		swing_mode = climate::CLIMATE_SWING_OFF;
-		preset = ClimatePreset::CLIMATE_PRESET_NONE;
+		this->swing_mode = climate::CLIMATE_SWING_OFF;
+		this->preset = ClimatePreset::CLIMATE_PRESET_NONE;
 	}
 	// Публикуем данные
 	this->publish_state();
@@ -222,43 +222,14 @@ void tclacClimate::control(const climate::ClimateCall &call) {
 	
 	ESP_LOGD("TCL", "Call from UI");
 	
-	// Запрашиваем данные из переключателя режимов работы кондиционера
 	if (call.get_mode().has_value()) this->mode = *call.get_mode();
-	
-	// Запрашиваем данные из переключателя предустановок кондиционера
-	if (call.get_preset().has_value()){
-		this->switch_preset = *call.get_preset();
-	} else {
-		this->switch_preset = preset.value();
-	}
-	
-	// Запрашиваем данные из переключателя режимов вентилятора
-	if (call.get_fan_mode().has_value()){
-		this->switch_fan_mode = *call.get_fan_mode();
-		ESP_LOGD("TCL", "Get FAN from call");
-	} else {
-		this->switch_fan_mode = fan_mode.value();
-		ESP_LOGD("TCL", "Get FAN from AC");
-	}
-	
-	// Запрашиваем данные из переключателя режимов качания заслонок
-	if (call.get_swing_mode().has_value()){
-		this->switch_swing_mode = *call.get_swing_mode();
-	} else {
-		// А если в переключателе пусто- заполняем значением из последнего опроса состояния. Типа, ничего не поменялось.
-		this->switch_swing_mode = swing_mode;
-	}
-	
-	// Расчет температуры
-	if (call.get_target_temperature().has_value()) {
-		this->target_temperature_set = 31-(int)call.get_target_temperature().value();
-	} else {
-		this->target_temperature_set = 31-(int)target_temperature;
-	}
+    if (call.get_target_temperature().has_value()) this->target_temperature = *call.get_target_temperature();
+    if (call.get_fan_mode().has_value()) this->fan_mode = *call.get_fan_mode();
+	if (call.get_swing_mode().has_value()) this->swing_mode = *call.get_swing_mode();
 	
 	this->is_call_control = true;
-	takeControl();
 	this->publish_state();
+	this->takeControl();
 	this->allow_take_control = true;
 }
 	
