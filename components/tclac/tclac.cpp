@@ -223,12 +223,7 @@ void tclacClimate::control(const climate::ClimateCall &call) {
 	ESP_LOGD("TCL", "Call from UI");
 	
 	// Запрашиваем данные из переключателя режимов работы кондиционера
-	if (call.get_mode().has_value()){
-		this->mode = *call.get_mode();
-		ESP_LOGD("TCL", "Get MODE from call");
-	} else {
-		ESP_LOGD("TCL", "Get MODE from AC");
-	}
+	if (call.get_mode().has_value()) this->mode = *call.get_mode();
 	
 	// Запрашиваем данные из переключателя предустановок кондиционера
 	if (call.get_preset().has_value()){
@@ -301,7 +296,7 @@ void tclacClimate::takeControl() {
 	
 	// ВНИМАНИЕ! При выключении дисплея кондиционер сам принудительно переходит в автоматический режим!
 	
-	if ((display_status_) && (switch_climate_mode != climate::CLIMATE_MODE_OFF)){
+	if ((display_status_) && (mode != climate::CLIMATE_MODE_OFF)){
 		ESP_LOGD("TCL", "Dispaly turn ON");
 		dataTX[7] += 0b01000000;
 	} else {
