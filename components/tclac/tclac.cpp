@@ -203,6 +203,9 @@ void tclacClimate::readData() {
 
 // Climate control
 void tclacClimate::control(const ClimateCall &call) {
+	
+	ESP_LOGD("TCL", "Call from UI");
+	
 	// Запрашиваем данные из переключателя режимов работы кондиционера
 	if (call.get_mode().has_value()){
 		switch_climate_mode = call.get_mode().value();
