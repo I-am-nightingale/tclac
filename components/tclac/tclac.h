@@ -127,7 +127,6 @@ class tclacClimate : public climate::Climate, public esphome::uart::UARTDevice, 
 		void sendData(byte * message, byte size);
 		void set_module_display_state(bool state);
 		static String getHex(byte *message, byte size);
-		void control(const climate::ClimateCall &call) override;
 		static byte getChecksum(const byte * message, size_t size);
 		void set_vertical_airflow(AirflowVerticalDirection direction);
 		void set_horizontal_airflow(AirflowHorizontalDirection direction);
@@ -143,13 +142,14 @@ class tclacClimate : public climate::Climate, public esphome::uart::UARTDevice, 
 		GPIOPin *tx_led_pin_;
 		ClimateTraits traits() override;
 		climate::ClimateModeMask supported_modes_{};
-		climate::ClimatePresetMask supported_presets_{};
 		AirflowVerticalDirection vertical_direction_;
-		climate::ClimateFanModeMask supported_fan_modes_{};
+		climate::ClimatePresetMask supported_presets_{};
 		AirflowHorizontalDirection horizontal_direction_;
 		VerticalSwingDirection vertical_swing_direction_;
-		climate::ClimateSwingModeMask supported_swing_modes_{};
+		climate::ClimateFanModeMask supported_fan_modes_{};
 		HorizontalSwingDirection horizontal_swing_direction_;
+		climate::ClimateSwingModeMask supported_swing_modes_{};
+		void control(const climate::ClimateCall &call) override;
 };
 }
 }
