@@ -203,7 +203,7 @@ void tclacClimate::readData() {
    }
 
 // Climate control
-void tclacClimate::control(const ClimateCall &call) {
+void tclacClimate::control(const climate::ClimateCall &call) {
 	
 	ESP_LOGD("TCL", "Call from UI");
 	
