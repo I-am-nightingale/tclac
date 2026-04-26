@@ -18,6 +18,7 @@ ClimateTraits tclacClimate::traits() {
 	traits.add_feature_flags(climate::CLIMATE_SUPPORTS_CURRENT_TEMPERATURE); // Предудущие методы запрещены, теперь нужно использовать add_feature_flags
 
 	traits.set_supported_modes(this->supported_modes_);
+	ESP_LOGD("TCL", this->supported_modes_);
 	traits.set_supported_presets(this->supported_presets_);
 	traits.set_supported_fan_modes(this->supported_fan_modes_);
 	traits.set_supported_swing_modes(this->supported_swing_modes_);
