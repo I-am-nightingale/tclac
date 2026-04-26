@@ -241,8 +241,10 @@ void tclacClimate::control(const climate::ClimateCall &call) {
 	// Запрашиваем данные из переключателя режимов вентилятора
 	if (call.get_fan_mode().has_value()){
 		this->switch_fan_mode = *call.get_fan_mode();
+		ESP_LOGD("TCL", "Get FAN from call");
 	} else {
 		this->switch_fan_mode = fan_mode.value();
+		ESP_LOGD("TCL", "Get FAN from AC");
 	}
 	
 	// Запрашиваем данные из переключателя режимов качания заслонок
