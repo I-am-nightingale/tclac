@@ -127,7 +127,7 @@ class tclacClimate : public climate::Climate, public esphome::uart::UARTDevice, 
 		void sendData(byte * message, byte size);
 		void set_module_display_state(bool state);
 		static String getHex(byte *message, byte size);
-		void control(const ClimateCall &call) override;
+		void control(const climate::ClimateCall &call) override;
 		static byte getChecksum(const byte * message, size_t size);
 		void set_vertical_airflow(AirflowVerticalDirection direction);
 		void set_horizontal_airflow(AirflowHorizontalDirection direction);

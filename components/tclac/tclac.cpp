@@ -246,6 +246,7 @@ void tclacClimate::control(const climate::ClimateCall &call) {
 	}
 	
 	is_call_control = true;
+	this->publish_state();
 	takeControl();
 	allow_take_control = true;
 }
