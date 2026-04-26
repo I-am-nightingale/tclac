@@ -14,11 +14,11 @@ namespace tclac{
 
 ClimateTraits tclacClimate::traits() {
 	auto traits = climate::ClimateTraits();
+	ESP_LOGD("TCL", "Traits registration");
 
 	traits.add_feature_flags(climate::CLIMATE_SUPPORTS_CURRENT_TEMPERATURE); // Предудущие методы запрещены, теперь нужно использовать add_feature_flags
 
 	traits.set_supported_modes(this->supported_modes_);
-	ESP_LOGD("TCL", this->supported_modes_);
 	traits.set_supported_presets(this->supported_presets_);
 	traits.set_supported_fan_modes(this->supported_fan_modes_);
 	traits.set_supported_swing_modes(this->supported_swing_modes_);
@@ -692,6 +692,7 @@ void tclacClimate::set_vertical_swing_direction(VerticalSwingDirection direction
 // Получение доступных режимов работы кондиционера
 void tclacClimate::set_supported_modes(climate::ClimateModeMask modes) {
 	this->supported_modes_ = modes;
+	ESP_LOGD("TCL", "Set up Modes");
 }
 // Получение режима качания горизонтальных заслонок
 void tclacClimate::set_horizontal_swing_direction(HorizontalSwingDirection direction) {
