@@ -14,7 +14,6 @@ namespace tclac{
 
 ClimateTraits tclacClimate::traits() {
 	auto traits = climate::ClimateTraits();
-	ESP_LOGD("TCL", "Traits registration");
 
 	traits.add_feature_flags(climate::CLIMATE_SUPPORTS_CURRENT_TEMPERATURE); // Предудущие методы запрещены, теперь нужно использовать add_feature_flags
 
@@ -29,6 +28,7 @@ ClimateTraits tclacClimate::traits() {
 	traits.add_supported_swing_mode(climate::CLIMATE_SWING_OFF);	// Выключенный режим качания заслонок доступен всегда
 	traits.add_supported_preset(ClimatePreset::CLIMATE_PRESET_NONE);// На всякий случай без предустановок
 
+	ESP_LOGD("TCL", "Traits registration");
 	return traits;
 }
 
