@@ -132,22 +132,22 @@ void tclacClimate::readData() {
 
 		switch (modeswitch) {
 			case MODE_AUTO:
-				mode = climate::CLIMATE_MODE_AUTO;
+				this->mode = climate::CLIMATE_MODE_AUTO;
 				break;
 			case MODE_COOL:
-				mode = climate::CLIMATE_MODE_COOL;
+				this->mode = climate::CLIMATE_MODE_COOL;
 				break;
 			case MODE_DRY:
-				mode = climate::CLIMATE_MODE_DRY;
+				this->mode = climate::CLIMATE_MODE_DRY;
 				break;
 			case MODE_FAN_ONLY:
-				mode = climate::CLIMATE_MODE_FAN_ONLY;
+				this->mode = climate::CLIMATE_MODE_FAN_ONLY;
 				break;
 			case MODE_HEAT:
-				mode = climate::CLIMATE_MODE_HEAT;
+				this->mode = climate::CLIMATE_MODE_HEAT;
 				break;
 			default:
-				mode = climate::CLIMATE_MODE_AUTO;
+				this->mode = climate::CLIMATE_MODE_AUTO;
 		}
 
 		if ( dataRX[FAN_QUIET_POS] & FAN_QUIET) {
@@ -224,10 +224,9 @@ void tclacClimate::control(const climate::ClimateCall &call) {
 	
 	// Запрашиваем данные из переключателя режимов работы кондиционера
 	if (call.get_mode().has_value()){
-		this->switch_climate_mode = *call.get_mode();
+		this->mode = *call.get_mode();
 		ESP_LOGD("TCL", "Get MODE from call");
 	} else {
-		this->switch_climate_mode = mode;
 		ESP_LOGD("TCL", "Get MODE from AC");
 	}
 	
@@ -282,7 +281,6 @@ void tclacClimate::takeControl() {
 	
 	if (is_call_control != true){
 		ESP_LOGD("TCL", "Get MODE from AC for force config");
-		switch_climate_mode = mode;
 		switch_preset = preset.value();
 		switch_fan_mode = fan_mode.value();
 		switch_swing_mode = swing_mode;
@@ -312,7 +310,7 @@ void tclacClimate::takeControl() {
 	}
 		
 	// Настраиваем режим работы кондиционера
-	switch (switch_climate_mode) {
+	switch (this->mode) {
 		case climate::CLIMATE_MODE_OFF:
 			dataTX[7] += 0b00000000;
 			dataTX[8] += 0b00000000;
