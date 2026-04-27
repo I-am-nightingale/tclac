@@ -301,7 +301,7 @@ void tclacClimate::takeControl() {
 
 	// Настраиваем режим вентилятора
 	if (this->fan_mode.has_value()) {
-		switch(this->fan_mode) {
+		switch(*this->fan_mode) {
 			case climate::CLIMATE_FAN_AUTO:
 				dataTX[8]	+= 0b00000000;
 				dataTX[10]	+= 0b00000000;
@@ -359,7 +359,7 @@ void tclacClimate::takeControl() {
 	
 	// Устанавливаем предустановки кондиционера
 	if (this->preset.has_value()) {
-		switch(preset) {
+		switch(*this->preset) {
 			case ClimatePreset::CLIMATE_PRESET_NONE:
 				break;
 			case ClimatePreset::CLIMATE_PRESET_ECO:
