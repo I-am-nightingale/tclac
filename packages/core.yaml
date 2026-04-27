@@ -310,7 +310,3 @@ climate:
   - platform: tclac
     name: "${device_name} Climate"
     id: ${device_name}climate
-    supported_modes:
-      - COOL
-      - DRY
-      - FAN_ONLY

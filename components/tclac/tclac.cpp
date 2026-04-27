@@ -222,12 +222,14 @@ void tclacClimate::control(const climate::ClimateCall &call) {
 	
 	ESP_LOGD("TCL", "Call from UI");
 	
+	// А это и ниже я подрезал у Vi3jo.
+	
 	if (call.get_mode().has_value()) this->mode = *call.get_mode();
     if (call.get_target_temperature().has_value()) this->target_temperature = *call.get_target_temperature();
     if (call.get_fan_mode().has_value()) this->fan_mode = *call.get_fan_mode();
 	if (call.get_swing_mode().has_value()) this->swing_mode = *call.get_swing_mode();
+	if (call.get_preset().has_value()) this->preset = *call.get_preset();
 	
-	this->is_call_control = true;
 	this->publish_state();
 	this->takeControl();
 	this->allow_take_control = true;
@@ -245,13 +247,7 @@ void tclacClimate::takeControl() {
 	dataTX[32] = 0b00000000;
 	dataTX[33] = 0b00000000;
 	
-	if (is_call_control != true){
-		ESP_LOGD("TCL", "Get MODE from AC for force config");
-		switch_preset = preset.value();
-		switch_fan_mode = fan_mode.value();
-		switch_swing_mode = swing_mode;
-		target_temperature_set = 31-(int)target_temperature;
-	}
+	uint8_t target_temperature_set = 31-(int)target_temperature;
 	
 	// Включаем или отключаем пищалку в зависимости от переключателя в настройках
 	if (beeper_status_){
@@ -304,43 +300,45 @@ void tclacClimate::takeControl() {
 	}
 
 	// Настраиваем режим вентилятора
-	switch(switch_fan_mode) {
-		case climate::CLIMATE_FAN_AUTO:
-			dataTX[8]	+= 0b00000000;
-			dataTX[10]	+= 0b00000000;
-			break;
-		case climate::CLIMATE_FAN_QUIET:
-			dataTX[8]	+= 0b10000000;
-			dataTX[10]	+= 0b00000000;
-			break;
-		case climate::CLIMATE_FAN_LOW:
-			dataTX[8]	+= 0b00000000;
-			dataTX[10]	+= 0b00000001;
-			break;
-		case climate::CLIMATE_FAN_MIDDLE:
-			dataTX[8]	+= 0b00000000;
-			dataTX[10]	+= 0b00000110;
-			break;
-		case climate::CLIMATE_FAN_MEDIUM:
-			dataTX[8]	+= 0b00000000;
-			dataTX[10]	+= 0b00000011;
-			break;
-		case climate::CLIMATE_FAN_HIGH:
-			dataTX[8]	+= 0b00000000;
-			dataTX[10]	+= 0b00000111;
-			break;
-		case climate::CLIMATE_FAN_FOCUS:
-			dataTX[8]	+= 0b00000000;
-			dataTX[10]	+= 0b00000101;
-			break;
-		case climate::CLIMATE_FAN_DIFFUSE:
-			dataTX[8]	+= 0b01000000;
-			dataTX[10]	+= 0b00000000;
-			break;
+	if (this->fan_mode.has_value()) {
+		switch(this->fan_mode) {
+			case climate::CLIMATE_FAN_AUTO:
+				dataTX[8]	+= 0b00000000;
+				dataTX[10]	+= 0b00000000;
+				break;
+			case climate::CLIMATE_FAN_QUIET:
+				dataTX[8]	+= 0b10000000;
+				dataTX[10]	+= 0b00000000;
+				break;
+			case climate::CLIMATE_FAN_LOW:
+				dataTX[8]	+= 0b00000000;
+				dataTX[10]	+= 0b00000001;
+				break;
+			case climate::CLIMATE_FAN_MIDDLE:
+				dataTX[8]	+= 0b00000000;
+				dataTX[10]	+= 0b00000110;
+				break;
+			case climate::CLIMATE_FAN_MEDIUM:
+				dataTX[8]	+= 0b00000000;
+				dataTX[10]	+= 0b00000011;
+				break;
+			case climate::CLIMATE_FAN_HIGH:
+				dataTX[8]	+= 0b00000000;
+				dataTX[10]	+= 0b00000111;
+				break;
+			case climate::CLIMATE_FAN_FOCUS:
+				dataTX[8]	+= 0b00000000;
+				dataTX[10]	+= 0b00000101;
+				break;
+			case climate::CLIMATE_FAN_DIFFUSE:
+				dataTX[8]	+= 0b01000000;
+				dataTX[10]	+= 0b00000000;
+				break;
+		}
 	}
 	
 	// Устанавливаем режим качания заслонок
-	switch(switch_swing_mode) {
+	switch(this->swing_mode) {
 		case climate::CLIMATE_SWING_OFF:
 			dataTX[10]	+= 0b00000000;
 			dataTX[11]	+= 0b00000000;
@@ -360,18 +358,20 @@ void tclacClimate::takeControl() {
 	}
 	
 	// Устанавливаем предустановки кондиционера
-	switch(switch_preset) {
-		case ClimatePreset::CLIMATE_PRESET_NONE:
-			break;
-		case ClimatePreset::CLIMATE_PRESET_ECO:
-			dataTX[7]	+= 0b10000000;
-			break;
-		case ClimatePreset::CLIMATE_PRESET_SLEEP:
-			dataTX[19]	+= 0b00000001;
-			break;
-		case ClimatePreset::CLIMATE_PRESET_COMFORT:
-			dataTX[8]	+= 0b00010000;
-			break;
+	if (this->preset.has_value()) {
+		switch(preset) {
+			case ClimatePreset::CLIMATE_PRESET_NONE:
+				break;
+			case ClimatePreset::CLIMATE_PRESET_ECO:
+				dataTX[7]	+= 0b10000000;
+				break;
+			case ClimatePreset::CLIMATE_PRESET_SLEEP:
+				dataTX[19]	+= 0b00000001;
+				break;
+			case ClimatePreset::CLIMATE_PRESET_COMFORT:
+				dataTX[8]	+= 0b00010000;
+				break;
+		}
 	}
 
         //Режим заслонок
