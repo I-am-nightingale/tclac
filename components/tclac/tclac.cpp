@@ -90,10 +90,10 @@ void tclacClimate::loop()  {
 		// Добываем контрольную сумму:
 		if (dataRX[4] == 0x3e){
 			// Для пакета данных длиной 68 байт
-			uint8_t check = getChecksum(dataRX, 68);
+			check = getChecksum(dataRX, 68);
 		} else {
 			// Для пакета данных длиной 61 байт
-			uint8_t check = getChecksum(dataRX, 61);
+			check = getChecksum(dataRX, 61);
 		}
 
 		//raw = getHex(dataRX, sizeof(dataRX));

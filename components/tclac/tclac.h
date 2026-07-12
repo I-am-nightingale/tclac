@@ -86,6 +86,7 @@ class tclacClimate : public climate::Climate, public esphome::uart::UARTDevice, 
 
 	private:
 		uint8_t checksum;
+		uint8_t check = 0;
 		// dataTX с управлением состоит из 38 байт
 		uint8_t dataTX[38];
 		// А dataRX в некоторых моделях разбухает до 68 байт
