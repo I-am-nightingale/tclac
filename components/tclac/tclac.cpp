@@ -91,9 +91,12 @@ void tclacClimate::loop()  {
 		if (dataRX[4] == 0x3e){
 			// Для пакета данных длиной 68 байт
 			check = getChecksum(dataRX, 68);
-		} else {
+		} else if (dataRX[4] == 0x37){
 			// Для пакета данных длиной 61 байт
 			check = getChecksum(dataRX, 61);
+		} else {
+			// Для пакета данных длиной 65 байт
+			check = getChecksum(dataRX, 65);
 		}
 
 		//raw = getHex(dataRX, sizeof(dataRX));
@@ -109,9 +112,17 @@ void tclacClimate::loop()  {
 			} else {
 				//ESP_LOGD("TCL", "checksum OK %x", check);
 			}
-		}
-		else {
+		} else if (dataRX[4] == 0x37){
 			if (check != dataRX[60]) {
+				// Для пакета данных длиной 61 байт
+				ESP_LOGD("TCL", "Invalid checksum %x", check);
+				this->dataShow(0,0);
+				return;
+			} else {
+				//ESP_LOGD("TCL", "checksum OK %x", check);
+			}
+		} else {
+			if (check != dataRX[64]) {
 				// Для пакета данных длиной 61 байт
 				ESP_LOGD("TCL", "Invalid checksum %x", check);
 				this->dataShow(0,0);
