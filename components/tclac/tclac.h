@@ -88,8 +88,8 @@ class tclacClimate : public climate::Climate, public esphome::uart::UARTDevice, 
 		uint8_t checksum;
 		// dataTX с управлением состоит из 38 байт
 		uint8_t dataTX[38];
-		// А dataRX по прежнему из 61 байта
-		uint8_t dataRX[61];
+		// А dataRX в некоторых моделях разбухает до 68 байт
+		uint8_t dataRX[68];
 		// Команда запроса состояния
 		uint8_t poll[8] = {0xBB,0x00,0x01,0x04,0x02,0x01,0x00,0xBD};
 		// Инициализация и начальное наполнение переменных состоянй переключателей

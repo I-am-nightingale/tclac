@@ -66,7 +66,7 @@ SUPPORTED_SWING_MODES_OPTIONS = {
 
 SUPPORTED_CLIMATE_MODES_OPTIONS = {
     "OFF": ClimateMode.CLIMATE_MODE_OFF,  # Доступен всегда
-    "AUTO": ClimateMode.CLIMATE_MODE_AUTO,  # Доступен всегда
+    "AUTO": ClimateMode.CLIMATE_MODE_HEAT_COOL,  # Доступен всегда
     "COOL": ClimateMode.CLIMATE_MODE_COOL,
     "HEAT": ClimateMode.CLIMATE_MODE_HEAT,
     "DRY": ClimateMode.CLIMATE_MODE_DRY,
@@ -82,7 +82,7 @@ SUPPORTED_CLIMATE_PRESETS_OPTIONS = {
 
 VerticalSwingDirection = tclac_ns.enum("VerticalSwingDirection", True)
 VERTICAL_SWING_DIRECTION_OPTIONS = {
-    "UP_DOWN": VerticalSwingDirection.UPDOWN,
+    "UP_DOWN": VerticalSwingDirection.UP_DOWN,
     "UPSIDE": VerticalSwingDirection.UPSIDE,
     "DOWNSIDE": VerticalSwingDirection.DOWNSIDE,
 }

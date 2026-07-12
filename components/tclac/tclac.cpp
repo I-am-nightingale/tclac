@@ -19,7 +19,7 @@ ClimateTraits tclacClimate::traits() {
 	// Ответственно заявляю, что это все я взял у christoph5180
 	if (this->supported_modes_.empty()) {
 		traits.add_supported_mode(climate::CLIMATE_MODE_OFF);
-		traits.add_supported_mode(climate::CLIMATE_MODE_AUTO);
+		traits.add_supported_mode(climate::CLIMATE_MODE_HEAT_COOL);
 	} else {
 		for (auto mode : this->supported_modes_)
 			traits.add_supported_mode(mode);
@@ -82,25 +82,43 @@ void tclacClimate::loop()  {
 		dataRX[4] = esphome::uart::UARTDevice::read();
 
 		//auto raw = getHex(dataRX, 5);
-		
 		//ESP_LOGD("TCL", "first 5 byte : %s ", raw.c_str());
 
 		// Из первых 5 байт нам нужен пятый- он содержит длину сообщения
 		esphome::uart::UARTDevice::read_array(dataRX+5, dataRX[4]+1);
 
-		uint8_t check = getChecksum(dataRX, sizeof(dataRX));
+		// Добываем контрольную сумму:
+		if (dataRX[4] == 0x3e){
+			// Для пакета данных длиной 68 байт
+			uint8_t check = getChecksum(dataRX, 68);
+		} else {
+			// Для пакета данных длиной 61 байт
+			uint8_t check = getChecksum(dataRX, 61);
+		}
 
 		//raw = getHex(dataRX, sizeof(dataRX));
-		
 		//ESP_LOGD("TCL", "RX full : %s ", raw.c_str());
 		
-		// Проверяем контрольную сумму
-		if (check != dataRX[60]) {
-			ESP_LOGD("TCL", "Invalid checksum %x", check);
-			this->dataShow(0,0);
-			return;
-		} else {
-			//ESP_LOGD("TCL", "checksum OK %x", check);
+		// Проверяем контрольную сумму:
+		if (dataRX[4] == 0x3e){
+			// Для пакета данных длиной 68 байт
+			if (check != dataRX[67]) {
+				ESP_LOGD("TCL", "Invalid checksum %x", check);
+				this->dataShow(0,0);
+				return;
+			} else {
+				//ESP_LOGD("TCL", "checksum OK %x", check);
+			}
+		}
+		else {
+			if (check != dataRX[60]) {
+				// Для пакета данных длиной 61 байт
+				ESP_LOGD("TCL", "Invalid checksum %x", check);
+				this->dataShow(0,0);
+				return;
+			} else {
+				//ESP_LOGD("TCL", "checksum OK %x", check);
+			}
 		}
 		this->dataShow(0,0);
 		// Прочитав все из буфера приступаем к разбору данных
@@ -118,7 +136,9 @@ void tclacClimate::update() {
 
 void tclacClimate::readData() {
 	
-	current_temperature = float((( (dataRX[17] << 8) | dataRX[18] ) / 374 - 32)/1.8);
+	// Эту конструкцию предложила нейронка Claude, я вообще не понимаю таких изысков, так что вставляю как есть.
+	current_temperature = ((float)((dataRX[17] << 8) | dataRX[18]) / 374.0f - 32.0f) / 1.8f;
+	
 	target_temperature = (dataRX[FAN_SPEED_POS] & SET_TEMP_MASK) + 16;
 
 	//ESP_LOGD("TCL", "TEMP: %f ", current_temperature);
@@ -132,7 +152,7 @@ void tclacClimate::readData() {
 
 		switch (modeswitch) {
 			case MODE_AUTO:
-				this->mode = climate::CLIMATE_MODE_AUTO;
+				this->mode = climate::CLIMATE_MODE_HEAT_COOL;
 				break;
 			case MODE_COOL:
 				this->mode = climate::CLIMATE_MODE_COOL;
@@ -147,7 +167,7 @@ void tclacClimate::readData() {
 				this->mode = climate::CLIMATE_MODE_HEAT;
 				break;
 			default:
-				this->mode = climate::CLIMATE_MODE_AUTO;
+				this->mode = climate::CLIMATE_MODE_HEAT_COOL;
 		}
 
 		if ( dataRX[FAN_QUIET_POS] & FAN_QUIET) {
@@ -277,7 +297,7 @@ void tclacClimate::takeControl() {
 			dataTX[7] += 0b00000000;
 			dataTX[8] += 0b00000000;
 			break;
-		case climate::CLIMATE_MODE_AUTO:
+		case climate::CLIMATE_MODE_HEAT_COOL:
 			dataTX[7] += 0b00000100;
 			dataTX[8] += 0b00001000;
 			break;
@@ -530,6 +550,7 @@ void tclacClimate::takeControl() {
 	dataTX[26] = 0x00;	//??
 	dataTX[27] = 0x00;	//??
 	dataTX[28] = 0x00;	//??
+	dataTX[29] = 0x00;	//??
 	dataTX[30] = 0x00;	//??
 	dataTX[31] = 0x00;	//??
 	//dataTX[32] = 0x00;	//0,0,0,режим вертикального качания(2),режим вертикальной фиксации(3)

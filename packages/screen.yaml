@@ -42,7 +42,7 @@ display:
         
         if (id(${device_name}climate).mode == CLIMATE_MODE_OFF){
           id(oled_disp).print(0, 14, id(font1), "Выключен");
-        } else if (id(${device_name}climate).mode == CLIMATE_MODE_AUTO){
+        } else if (id(${device_name}climate).mode == CLIMATE_MODE_HEAT_COOL){
           id(oled_disp).print(0, 14, id(font1), "Авто");
         } else if (id(${device_name}climate).mode == CLIMATE_MODE_COOL){
           id(oled_disp).print(0, 14, id(font1), "Мороз");

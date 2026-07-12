@@ -4,6 +4,7 @@
 родного модуля WiFI, не иметь провода с USB разъемом или вовсе на плате управления может не быть впаян разъем UART.
 Однако, в целом, с пайкой или без, проверены следующие кондиционеры:
 - Axioma ASX09H1/ASB09H1
+- Ballu BSAI-12HN1_15Y
 - Ballu Discovery DC BSVI-07HN8
 - Ballu Discovery DC BSVI-09HN8
 - Ballu Discovery DC BSVI-12HN8
@@ -14,6 +15,8 @@
 - Dantex RK-12SATI/RK-12SATIE
 - Ecostar Radium KVS-RAD09CH
 - Royal Clima Gloria Inverter
+- Royal Clima Pandora RC-PDC28HN
+- Tesla TT27TP61S-0932IAWUV
 - TCL ELI ONF 12
 - TCL Liferise ONF 09
 - TCL TAC-CT09INV/R
@@ -27,7 +30,7 @@
 - TCL TAC-XAL24I
 - TCL TPG31IHB
 
-Компоненту требуется HomeAsistant и ESPHome версии не ниже 2023.3.0 !
+Компоненту требуется HomeAsistant и ESPHome версии не ниже 2025.11.0 !
 ____
 Это все для работы ИСКЛЮЧИТЕЛЬНО с HomeAsistant и ESPHome. Если Вас интересует другие варианты или возможность подключить кондиционер
 как-то иначе к каким-то другим системам, то мне есть что предложить:
