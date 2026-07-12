@@ -123,7 +123,7 @@ void tclacClimate::loop()  {
 			}
 		} else {
 			if (check != dataRX[64]) {
-				// Для пакета данных длиной 61 байт
+				// Для пакета данных длиной 65 байт
 				ESP_LOGD("TCL", "Invalid checksum %x", check);
 				this->dataShow(0,0);
 				return;
