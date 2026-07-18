@@ -1,0 +1,4 @@
+climate:
+  - platform: tclac
+    id: !extend ${device_name}climate
+    rep_tx: true
