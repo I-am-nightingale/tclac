@@ -31,4 +31,4 @@ select:
 globals:
   - id: speed_var
     type: bool
-    initial_value: true
+    initial_value: 'true'
