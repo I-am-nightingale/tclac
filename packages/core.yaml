@@ -20,6 +20,18 @@ esphome:
     priority: -100
     then:
       lambda: !lambda |-
+      
+        if (id(change_baud_rate).state){
+          id(${device_name}_uart).flush();
+          uint32_t new_baud_rate = stoi(id(change_baud_rate).state.c_str());
+          ESP_LOGD("change_baud_rate", "Changing baud rate from %i to %i",id(${device_name}_uart).get_baud_rate(),
+                   new_baud_rate);
+          if (id(${device_name}_uart).get_baud_rate() != new_baud_rate) {
+            id(${device_name}_uart).set_baud_rate(new_baud_rate);
+            id(${device_name}_uart).load_settings();
+          }
+        }
+        
         id(${device_name}climate).set_beeper_state(false);
         id(${device_name}climate).set_force_mode_state(false);
         
