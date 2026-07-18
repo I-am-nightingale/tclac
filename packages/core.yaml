@@ -12,6 +12,10 @@ external_components:
     refresh: 30s
 
 # Конфигурация ESPHome
+
+substitutions:
+  boot_actions: !lambda |- # Пустые действия по умолчанию
+
 esphome:
   name: ${device_name}
   min_version: 2026.4.0
@@ -21,16 +25,8 @@ esphome:
     then:
       lambda: !lambda |-
       
-        if (speed_var){
-          id(${device_name}_uart).flush();
-          uint32_t new_baud_rate = stoi(id(change_baud_rate).current_option().str());
-          ESP_LOGD("change_baud_rate", "Changing baud rate from %i to %i",id(${device_name}_uart).get_baud_rate(),
-                   new_baud_rate);
-          if (id(${device_name}_uart).get_baud_rate() != new_baud_rate) {
-            id(${device_name}_uart).set_baud_rate(new_baud_rate);
-            id(${device_name}_uart).load_settings();
-          }
-        }
+        ${boot_actions}
+        
         
         id(${device_name}climate).set_beeper_state(false);
         id(${device_name}climate).set_force_mode_state(false);

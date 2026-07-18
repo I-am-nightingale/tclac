@@ -28,7 +28,12 @@ select:
             id(${device_name}_uart).load_settings();
           }
           
-globals:
-  - id: speed_var
-    type: bool
-    initial_value: 'true'
+substitutions:
+  boot_actions: !lambda |-
+    id(${device_name}_uart).flush();
+    uint32_t new_baud_rate = stoi(id(change_baud_rate).current_option().str());
+    ESP_LOGD("change_baud_rate", "Changing baud rate from %i to %i",id(${device_name}_uart).get_baud_rate(), new_baud_rate);
+    if (id(${device_name}_uart).get_baud_rate() != new_baud_rate) {
+      id(${device_name}_uart).set_baud_rate(new_baud_rate);
+      id(${device_name}_uart).load_settings();
+    }
