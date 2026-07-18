@@ -645,7 +645,8 @@ void tclacClimate::sendData(uint8_t * message, uint8_t size) {
 		if (k == 0) {
 			this->try_send_frame_(0, TX_MAX_DEFERS);
 		} else {
-			esphome::App.scheduler.set_timeout("tx_rep" + esphome::to_string(k), k * TX_REPEAT_SPACING_MS, [this, k]() {
+			uint32_t timer_tx_id = 42000 + k;
+			esphome::App.scheduler.set_timeout(timer_tx_id, k * TX_REPEAT_SPACING_MS, [this, k]() {
 				this->try_send_frame_(k, TX_MAX_DEFERS);
 			});
 		}
