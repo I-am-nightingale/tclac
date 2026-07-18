@@ -21,7 +21,7 @@ esphome:
     then:
       lambda: !lambda |-
       
-        if (id(change_baud_rate).current_option()){
+        if (speed_var){
           id(${device_name}_uart).flush();
           uint32_t new_baud_rate = stoi(id(change_baud_rate).current_option().c_str());
           ESP_LOGD("change_baud_rate", "Changing baud rate from %i to %i",id(${device_name}_uart).get_baud_rate(),

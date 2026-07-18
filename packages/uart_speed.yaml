@@ -27,3 +27,8 @@ select:
             id(${device_name}_uart).set_baud_rate(new_baud_rate);
             id(${device_name}_uart).load_settings();
           }
+          
+globals:
+  - id: speed_var
+    type: bool
+    initial_value: true
