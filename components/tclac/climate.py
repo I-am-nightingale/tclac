@@ -33,6 +33,7 @@ TCLAC_MAX_TEMPERATURE = 31.0
 TCLAC_TARGET_TEMPERATURE_STEP = 1.0
 TCLAC_CURRENT_TEMPERATURE_STEP = 1.0
 
+REPEAT_TX = "rep_tx"
 CONF_RX_LED = "rx_led"
 CONF_TX_LED = "tx_led"
 CONF_DISPLAY = "show_display"
@@ -146,6 +147,7 @@ CONFIG_SCHEMA = cv.All(
     climate.climate_schema(tclacClimate)
     .extend(
         {
+            cv.Optional(REPEAT_TX, default=True): cv.boolean,
             cv.Optional(CONF_BEEPER, default=True): cv.boolean,
             cv.Optional(CONF_DISPLAY, default=True): cv.boolean,
             cv.Optional(CONF_RX_LED): pins.gpio_output_pin_schema,
@@ -319,6 +321,8 @@ def to_code(config):
     yield uart.register_uart_device(var, config)
     yield climate.register_climate(var, config)
 
+    if REPEAT_TX in config:
+        cg.add_define("REPEAT_TX")
     if CONF_BEEPER in config:
         cg.add(var.set_beeper_state(config[CONF_BEEPER]))
     if CONF_DISPLAY in config:
