@@ -46,6 +46,7 @@ ____
 самое важное по мере сил.
 
 Выразить благодарность в России и Беларуси: карта Озон-банка 2204 3211 5682 2009
+
 Thank the author for the work: [My Steam account](https://steamcommunity.com/id/solovey-iron/) (yep, I like computer games)
 ____
 Образец для конфигурации ESPHome в файле TCL-Conditioner.yaml , упрощенный вариант конфигурации- Sample_conf.yaml . Скачайте к себе
