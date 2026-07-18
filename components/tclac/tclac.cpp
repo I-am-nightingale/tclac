@@ -157,6 +157,13 @@ void tclacClimate::readData() {
 	if (dataRX[MODE_POS] & ( 1 << 4)) {
 		// Если кондиционер включен, то разбираем данные для отображения
 		ESP_LOGD("TCL", "AC is on");
+
+		// Синхронизируем состояние дисплея с фактическим (бит DISPLAY_BIT в
+		// байте режима): пультом дисплей переключается мимо модуля, и без
+		// синхронизации следующая команда модуля перетирала бы состояние
+		// дисплея старым значением. Только когда кондиционер включён.
+		this->display_status_ = (dataRX[MODE_POS] & DISPLAY_BIT) != 0;
+
 		uint8_t modeswitch = MODE_MASK & dataRX[MODE_POS];
 		uint8_t fanspeedswitch = FAN_SPEED_MASK & dataRX[FAN_SPEED_POS];
 		uint8_t swingmodeswitch = SWING_MODE_MASK & dataRX[SWING_POS];

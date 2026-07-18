@@ -19,13 +19,17 @@ namespace tclac {
 #define SET_TEMP_MASK	0b00001111
 
 #define MODE_POS		7
-#define MODE_MASK		0b00111111
+// Бит 0b00100000 в байте режима — состояние ДИСПЛЕЯ кондиционера, он не
+// должен участвовать в определении режима (иначе с погашенным дисплеем
+// любой режим читается как "не распознан" и падает в default = AUTO)
+#define DISPLAY_BIT		0b00100000
+#define MODE_MASK		0b00001111
 
-#define MODE_AUTO		0b00110101
-#define MODE_COOL		0b00110001
-#define MODE_DRY		0b00110011
-#define MODE_FAN_ONLY	0b00110010
-#define MODE_HEAT		0b00110100
+#define MODE_AUTO		0b00000101
+#define MODE_COOL		0b00000001
+#define MODE_DRY		0b00000011
+#define MODE_FAN_ONLY	0b00000010
+#define MODE_HEAT		0b00000100
 
 #define FAN_SPEED_POS	8
 #define FAN_QUIET_POS	33
@@ -121,6 +125,9 @@ class tclacClimate : public climate::Climate, public esphome::uart::UARTDevice, 
 		void update() override;
 		void set_beeper_state(bool state);
 		void set_display_state(bool disp_state);
+		// Фактическое состояние дисплея кондиционера (синхронизируется из
+		// статусных кадров в readData)
+		bool get_display_state() { return this->display_status_; }
 		void dataShow(bool flow, bool shine);
 		void set_force_mode_state(bool f_state);
 		void set_rx_led_pin(GPIOPin *rx_led_pin);
