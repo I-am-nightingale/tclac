@@ -149,6 +149,21 @@ packages:
     refresh: 30s
 ```
 
+А так подключается переключатель скорости UART в настройках для тех, у кого кондиционер работает на другой скорости (packages/uart_speed.yaml):
+
+```yaml
+packages:
+  remote_package:
+    url: https://github.com/I-am-nightingale/tclac.git
+    ref: master
+    files:
+    # v - равнение строк с опциями вот по этой позиции, иначе глючить будет
+      - packages/core.yaml # Ядро всего сущего
+      - packages/leds.yaml
+	  - packages/uart_speed.yaml
+    refresh: 30s
+```
+
 А вот так уже **не правильно:**
 ```yaml
 packages:

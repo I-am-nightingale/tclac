@@ -91,6 +91,7 @@ esphome:
         }
 
 uart:
+  id: ${device_name}_uart
   baud_rate: 9600
   data_bits: 8
   parity: EVEN

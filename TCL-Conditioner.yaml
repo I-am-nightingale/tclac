@@ -29,6 +29,7 @@ substitutions:
 # Описание опций:
 # - packages/leds.yaml - светодиоды для индикации приема/передачи, пины указываются в receive_led / transmit_led
 # - packages/bad_connect.yaml - включение 3-хкратного повтора отправки команд в кондиционер
+# - packages/uart_speed.yaml - включение переключателя скорости UART. Появляется в настройках устройства.
 #
 # Выравнивать раскомментированные строки обязательно по указанной позиции!
 packages:
@@ -40,6 +41,7 @@ packages:
       - packages/core.yaml # Ядро всего сущего
       # - packages/leds.yaml
       # - packages/bad_connect.yaml
+      # - packages/uart_speed.yaml
     refresh: 30s
 
 # Выбранный модуль, прошиваемой этой прошивкой. Можно раскомментировать готовую заготовку, удалив имеющуюся:
