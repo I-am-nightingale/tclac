@@ -14,6 +14,7 @@
 - Daichi DA35EVQ1-1/DF35EV1-1
 - Dantex RK-12SATI/RK-12SATIE
 - Ecostar Radium KVS-RAD09CH
+- iFFALCON F1 18
 - Royal Clima Gloria Inverter
 - Royal Clima Pandora RC-PDC28HN
 - Tesla TT27TP61S-0932IAWUV
@@ -43,6 +44,9 @@ ____
 случиться именно с Вами- прошу сообщить мне на Дзене, приму меры.
 Подробное описание будет постепенно появляться [в моем канале на Дзене](https://dzen.ru/a/ZmdoyUNswXWnulhg) , сюда буду выкладывать
 самое важное по мере сил.
+
+Выразить благодарность в России и Беларуси: карта Озон-банка 2204 3211 5682 2009
+Thank the author for the work: [My Steam account](https://steamcommunity.com/id/solovey-iron/) (yep, I like computer games)
 ____
 Образец для конфигурации ESPHome в файле TCL-Conditioner.yaml , упрощенный вариант конфигурации- Sample_conf.yaml . Скачайте к себе
 и используйте в ESPHome, или просто скопируйте из него всю конфигурацию и вставьте вместо своей, однако, не забыв отредактировать

@@ -14,7 +14,7 @@ external_components:
 # Конфигурация ESPHome
 esphome:
   name: ${device_name}
-  min_version: 2025.11.0
+  min_version: 2026.4.0
   friendly_name: ${humanly_name}
   on_boot:
     priority: -100
